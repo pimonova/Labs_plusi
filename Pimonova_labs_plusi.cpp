@@ -2,10 +2,13 @@
 //
 
 #include <iostream>
+using namespace std;
+
+enum {exit, addPipe, addStation, viewObjects, editPipe, editStation, save, download};
 
 int main()
 {
-    std::cout << "Hello World!\n";
+
 }
 
 
