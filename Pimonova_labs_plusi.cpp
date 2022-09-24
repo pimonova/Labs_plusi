@@ -9,7 +9,7 @@ enum menu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, s
 
 //functions
 
-void skipToInt()
+void skip()
 {
     if (cin.fail())
     {
@@ -33,7 +33,18 @@ uint32_t getUInt() // Ввод беззнакового инта
     {
         if (cin >> x) return x;
         cout << "Try again:\n";
-        skipToInt();
+        skip();
+    }
+}
+
+double_t getDouble() // Ввод вещественного числа
+{
+    double x;
+    while (true)
+    {
+        if (cin >> x) return x;
+        cout << "Try again:\n";
+        skip();
     }
 }
 
@@ -45,7 +56,12 @@ int main()
 
     cout << "Enter an operation: ";
     uint32_t operation = getUInt();
-    cout << "OK";
+    cout << "OK \n";
+
+    cout << "Double: ";
+    double_t chisldouble = getDouble();
+    cout << "OK \n";
+    cout << chisldouble/2;
 
     return 0;
 }
