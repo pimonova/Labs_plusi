@@ -61,19 +61,46 @@ uint32_t getInRange(uint8_t x1,uint8_t x2) // Ввод числа в диапа�
 int main()
 {
 	cout << "Welcome to the main menu \nUse numbers to navigate:\n";
-	cout << "Exit:0 \nAdd pipe:1 \nAdd station:2 \nView objects:3 \nEdit pipe:4 \nSave:5 \nDownload:6 \n";
+	cout << "Exit:0 \nAdd pipe:1 \nAdd station:2 \nView objects:3 \nEdit pipe:4 \nEdit station:5 \nSave:6 \nDownload:7 \n";
 
     cout << "Enter an operation: ";
-    uint32_t operation = getInRange(0,6);
-    cout << "OK \n";
+    uint32_t operation = getInRange(0,7);
 
-    cout << "Double: ";
+    switch (operation)
+    {
+    case menu::exitMenu:
+        cout << "Zero";
+        break;
+    case menu::addPipe:
+        cout << "One";
+        break;
+    case menu::addStation:
+        cout << "Two";
+        break;
+    case menu::viewObjects:
+        cout << "Three";
+        break;
+    case menu::editPipe:
+        cout << "Four";
+        break;
+    case menu::editStation:
+        cout << "Five";
+        break;
+    case menu::save:
+        cout << "Six";
+        break;
+    case menu::download:
+        cout << "Seven";
+        break;
+    }
+
+    /*cout << "Double: ";
     double_t chisldouble = getDouble();
     cout << "OK \n";
 
     cout << "In diapason 0-100: \n";
     uint32_t chislzero = getInRange(0,100);
-    cout << "OK \n";
+    cout << "OK \n"; */
 
     return 0;
 }
