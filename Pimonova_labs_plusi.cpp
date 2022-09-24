@@ -48,6 +48,16 @@ double_t getDouble() // Ввод вещественного числа
     }
 }
 
+uint32_t getInRange() // Ввод беззнакового инта
+{
+    while (true)
+    {
+        uint32_t x = getUInt();
+        if (0<=x && x<=100) return x;
+        cout << "Try again:\n";
+    }
+}
+
 
 int main()
 {
@@ -61,7 +71,10 @@ int main()
     cout << "Double: ";
     double_t chisldouble = getDouble();
     cout << "OK \n";
-    cout << chisldouble/2;
+
+    cout << "In diapason 0-100: \n";
+    uint32_t chislzero = getInRange();
+    cout << "OK \n";
 
     return 0;
 }
