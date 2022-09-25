@@ -7,6 +7,22 @@ using namespace std;
 
 enum menu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, save, download };
 
+struct pipe
+{
+    double length;
+    double diameter;
+    bool repair;
+};
+
+struct station
+{
+    string name;
+    uint32_t numOfWorkshops;
+    uint32_t numOfWorkingWorkshops;
+    uint32_t diameter;
+    uint32_t efficiency;
+};
+
 //functions
 
 void skip()
@@ -14,14 +30,16 @@ void skip()
     if (cin.fail())
     {
         cin.clear();
+        cin.unget();
+        return;
         for (uint8_t ch; cin >> ch;)
-        { 
+        {
             if (isdigit(ch) || ch == '-')
             {
                 cin.unget(); 
                 return;
             }
-        }
+        } 
     }
     cout << ("No input");
 }
@@ -69,7 +87,8 @@ int main()
     switch (operation)
     {
     case menu::exitMenu:
-        cout << "Zero";
+        cout << "Bye!\n";
+        exit(0);
         break;
     case menu::addPipe:
         cout << "One";
@@ -92,10 +111,11 @@ int main()
     case menu::download:
         cout << "Seven";
         break;
-    }
+    } 
 
     /*cout << "Double: ";
     double_t chisldouble = getDouble();
+    cout << chisldouble / 2;
     cout << "OK \n";
 
     cout << "In diapason 0-100: \n";
