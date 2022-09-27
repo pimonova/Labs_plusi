@@ -5,7 +5,9 @@
 #include <limits>
 using namespace std;
 
-enum menu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, save, download };
+enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, save, download };
+enum pipeMenu {length = 11, diameter = 12, repair = 13};
+enum stationMenu { name = 21, numOfWorkshops = 22, numOfWorkingWorkshops= 23 , efficiency = 24};
 
 struct pipe
 {
@@ -21,7 +23,31 @@ struct station
 
 //functions
 
-void skip()
+uint32_t getUInt()
+{
+    uint32_t x;
+    do
+    {
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cin >> x;
+    } while (cin.fail() || cin.get() != '\n');
+    return x;
+}
+
+double getDouble()
+{
+    double x;
+    do
+    {
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cin >> x;
+    } while (cin.fail() || cin.get() != '\n');
+    return x;
+}
+
+/*void skip()
 {
     if (cin.fail())
     {
@@ -36,9 +62,9 @@ void skip()
         } 
     }
     cout << ("No input");
-}
+} */
 
-uint32_t getUInt() // Ввод беззнакового инта
+/* uint32_t getUInt() // Ввод беззнакового инта
 {
     uint32_t x;
     while (true)
@@ -47,9 +73,9 @@ uint32_t getUInt() // Ввод беззнакового инта
         cout << "Try again:\n";
         skip();
     }
-}
+} */
 
-double_t getDouble() // Ввод вещественного числа
+/* double_t getDouble() // Ввод вещественного числа
 {
     double x;
     while (true)
@@ -58,9 +84,9 @@ double_t getDouble() // Ввод вещественного числа
         cout << "Try again:\n";
         skip();
     }
-}
+} */
 
-bool getBool() // Ввод вещественного числа
+/* bool getBool() // Ввод вещественного числа
 {
     bool x;
     while (true)
@@ -69,13 +95,13 @@ bool getBool() // Ввод вещественного числа
         cout << "Try again:\n";
         skip();
     }
-}
+} */
 
 uint32_t getInRange(uint8_t x1,uint8_t x2) // Ввод числа в диапазоне
 {
+    uint32_t x = getUInt();
     while (true)
     {
-        uint32_t x = getUInt();
         if (x1<=x && x<=x2) return x;
         cout << "Try again:\n";
     }
@@ -90,17 +116,16 @@ int main()
     {
         cout << "Welcome to the main menu \nUse numbers to navigate:\n";
         cout << "Exit:0 \nAdd pipe:1 \nAdd station:2 \nView objects:3 \nEdit pipe:4 \nEdit station:5 \nSave:6 \nDownload:7 \n";
-
         cout << "Enter an operation: ";
         uint32_t operation = getInRange(0, 7);
 
         switch (operation)
         {
-        case menu::exitMenu:
+        case mainMenu::exitMenu:
             cout << "Bye!\n";
             exit(0);
             break;
-        case menu::addPipe:
+        case mainMenu::addPipe:
             system("cls");
             cout << "Add pipe parameters: length, diameter, repair\n";
             cout << "Length:\n";
@@ -110,7 +135,7 @@ int main()
             cout << "Repair:\n";
             cin >> pipe1.repair;
             break;
-        case menu::addStation:
+        case mainMenu::addStation:
             system("cls");
             cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
             cout << "Name:\n";
@@ -122,7 +147,7 @@ int main()
             cout << "Efficiency (0-100):\n";
             station1.efficiency = getInRange(0, 100);
             break;
-        case menu::viewObjects:
+        case mainMenu::viewObjects:
             system("cls");
             cout << "Pipe:\n";
             cout << "Length: " << pipe1.length << " Diameter: " << pipe1.diameter << " Repair: " << pipe1.repair << endl;
@@ -130,16 +155,48 @@ int main()
             cout << "Name: " << station1.name << " Number of workshops: " << station1.numOfWorkshops << "\nNumber of working workshops: " << station1.numOfWorkingWorkshops << " Efficiency: " << station1.efficiency << endl;
             cout << "\n";
             break;
-        case menu::editPipe:
-            cout << "Four";
+        case mainMenu::editPipe:
+            cout << "What do you want to change?\n";
+            cout << "Length:11 \nDiameter:12 \nRepair:13 \n";
+            cout << "Enter number: ";
+            uint32_t numberEditPipe = getUInt();
+            switch (numberEditPipe)
+            {
+                case pipeMenu::length:
+                    pipe1.length = getDouble();
+                    break;
+                case pipeMenu::diameter:
+                    pipe1.diameter = getDouble();
+                    break;
+                case pipeMenu::repair:
+                    cin >> pipe1.repair;
+                    break;
+            }
             break;
-        case menu::editStation:
-            cout << "Five";
+        case mainMenu::editStation:
+            cout << "What do you want to change?\n";
+            cout << "Name:21 \nNumber of workshops:22 \nNumber of working workshops:23 \nEfficiency:24 \n";
+            uint32_t numberEditStation = getUInt();
+            switch (numberEditStation)
+            {
+            case stationMenu::name:
+                cin >> station1.name;
+                break;
+            case stationMenu::numOfWorkshops:
+                station1.numOfWorkshops = getUInt();
+                break;
+            case stationMenu::numOfWorkingWorkshops:
+                station1.numOfWorkingWorkshops = getInRange(0, station1.numOfWorkshops);
+                break;
+            case stationMenu::efficiency:
+                station1.efficiency = getInRange(0, 100);
+                break;
+            }
             break;
-        case menu::save:
+        case mainMenu::save:
             cout << "Six";
             break;
-        case menu::download:
+        case mainMenu::download:
             cout << "Seven";
             break;
         }
