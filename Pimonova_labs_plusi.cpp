@@ -5,9 +5,13 @@
 #include <limits>
 using namespace std;
 
+// enums
+
 enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, save, download };
 enum pipeMenu {length = 11, diameter = 12, repair = 13};
 enum stationMenu { name = 21, numOfWorkshops = 22, numOfWorkingWorkshops= 23 , efficiency = 24};
+
+// structures
 
 struct pipe
 {
@@ -22,6 +26,14 @@ struct station
 };
 
 //functions
+
+void showMenu()
+{
+    cout << "Welcome to the main menu \nUse numbers to navigate:\n";
+    cout << "\n";
+    cout << "Exit:0 \nAdd pipe:1 \nAdd station:2 \nView objects:3 \nEdit pipe:4 \nEdit station:5 \nSave:6 \nDownload:7 \n";
+    cout << "\n";
+}
 
 uint32_t getUInt()
 {
@@ -109,13 +121,12 @@ uint32_t getInRange(uint8_t x1,uint8_t x2) // Ввод числа в диапа�
 
 int main()
 {
-    struct pipe pipe1;
-    struct station station1;
+    struct pipe pipe1{};
+    struct station station1{};
 
     while (true)
     {
-        cout << "Welcome to the main menu \nUse numbers to navigate:\n";
-        cout << "Exit:0 \nAdd pipe:1 \nAdd station:2 \nView objects:3 \nEdit pipe:4 \nEdit station:5 \nSave:6 \nDownload:7 \n";
+        showMenu();
         cout << "Enter an operation: ";
         uint32_t operation = getInRange(0, 7);
 
@@ -158,8 +169,7 @@ int main()
         case mainMenu::editPipe:
             cout << "What do you want to change?\n";
             cout << "Length:11 \nDiameter:12 \nRepair:13 \n";
-            cout << "Enter number: ";
-            uint32_t numberEditPipe = getUInt();
+            /*uint32_t numberEditPipe = getUInt();
             switch (numberEditPipe)
             {
                 case pipeMenu::length:
@@ -171,12 +181,12 @@ int main()
                 case pipeMenu::repair:
                     cin >> pipe1.repair;
                     break;
-            }
+            } */
             break;
         case mainMenu::editStation:
             cout << "What do you want to change?\n";
             cout << "Name:21 \nNumber of workshops:22 \nNumber of working workshops:23 \nEfficiency:24 \n";
-            uint32_t numberEditStation = getUInt();
+            /* uint32_t numberEditStation = getUInt();
             switch (numberEditStation)
             {
             case stationMenu::name:
@@ -191,7 +201,7 @@ int main()
             case stationMenu::efficiency:
                 station1.efficiency = getInRange(0, 100);
                 break;
-            }
+            } */
             break;
         case mainMenu::save:
             cout << "Six";
