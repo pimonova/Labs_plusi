@@ -119,6 +119,30 @@ uint32_t getInRange(uint8_t x1,uint8_t x2) // Ввод числа в диапа�
     }
 }
 
+void addPipes(pipe& x)
+{
+    cout << "Add pipe parameters: length, diameter, repair\n";
+    cout << "Length:\n";
+    x.length = getDouble();
+    cout << "Diameter:\n";
+    x.diameter = getDouble();
+    cout << "Repair:\n";
+    x.repair = getInRange(0, 1);
+}
+
+void addStations(station& x)
+{
+    cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
+    cout << "Name:\n";
+    cin >> x.name;
+    cout << "Number of workshops:\n";
+    x.numOfWorkshops = getUInt();
+    cout << "Number of working workshops:\n";
+    x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
+    cout << "Efficiency (0-100):\n";
+    x.efficiency = getInRange(0, 100);
+}
+
 int main()
 {
     struct pipe pipe1{};
@@ -138,25 +162,11 @@ int main()
             break;
         case mainMenu::addPipe:
             system("cls");
-            cout << "Add pipe parameters: length, diameter, repair\n";
-            cout << "Length:\n";
-            pipe1.length = getDouble();
-            cout << "Diameter:\n";
-            pipe1.diameter = getDouble();
-            cout << "Repair:\n";
-            cin >> pipe1.repair;
+            addPipes(pipe1);
             break;
         case mainMenu::addStation:
             system("cls");
-            cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
-            cout << "Name:\n";
-            cin >> station1.name;
-            cout << "Number of workshops:\n";
-            station1.numOfWorkshops = getUInt();
-            cout << "Number of working workshops:\n";
-            station1.numOfWorkingWorkshops = getInRange(0, station1.numOfWorkshops);
-            cout << "Efficiency (0-100):\n";
-            station1.efficiency = getInRange(0, 100);
+            addStations(station1);
             break;
         case mainMenu::viewObjects:
             system("cls");
@@ -211,14 +221,6 @@ int main()
             break;
         }
     }
-    /*cout << "Double: ";
-    double_t chisldouble = getDouble();
-    cout << chisldouble / 2;
-    cout << "OK \n";
-
-    cout << "In diapason 0-100: \n";
-    uint32_t chislzero = getInRange(0,100);
-    cout << "OK \n"; */
 
     return 0;
 }
