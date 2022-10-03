@@ -35,6 +35,8 @@ void showMenu()
     cout << "\n";
 }
 
+// функции для проверки
+
 uint32_t getUInt()
 {
     uint32_t x;
@@ -119,6 +121,8 @@ uint32_t getInRange(uint8_t x1,uint8_t x2) // Ввод числа в диапа�
     }
 }
 
+// функции добалвния новых элементов
+
 void addPipes(pipe& x)
 {
     cout << "Add pipe parameters: length, diameter, repair\n";
@@ -141,6 +145,20 @@ void addStations(station& x)
     x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
     cout << "Efficiency (0-100):\n";
     x.efficiency = getInRange(0, 100);
+}
+
+// функции просмотра добавленных элементов
+
+void viewPipes(pipe x)
+{
+    cout << "Pipe:\n";
+    cout << "Length: " << x.length << " Diameter: " << x.diameter << " Repair: " << x.repair << endl;
+}
+
+void viewStations(station x)
+{
+    cout << "Station:\n";
+    cout << "Name: " << x.name << " Number of workshops: " << x.numOfWorkshops << "\nNumber of working workshops: " << x.numOfWorkingWorkshops << " Efficiency: " << x.efficiency << endl;
 }
 
 int main()
@@ -170,10 +188,8 @@ int main()
             break;
         case mainMenu::viewObjects:
             system("cls");
-            cout << "Pipe:\n";
-            cout << "Length: " << pipe1.length << " Diameter: " << pipe1.diameter << " Repair: " << pipe1.repair << endl;
-            cout << "Station:\n";
-            cout << "Name: " << station1.name << " Number of workshops: " << station1.numOfWorkshops << "\nNumber of working workshops: " << station1.numOfWorkingWorkshops << " Efficiency: " << station1.efficiency << endl;
+            viewPipes(pipe1);
+            viewStations(station1);
             cout << "\n";
             break;
         case mainMenu::editPipe:
