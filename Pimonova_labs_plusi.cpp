@@ -161,6 +161,20 @@ void viewStations(station x)
     cout << "Name: " << x.name << " Number of workshops: " << x.numOfWorkshops << "\nNumber of working workshops: " << x.numOfWorkingWorkshops << " Efficiency: " << x.efficiency << endl;
 }
 
+// функции изменения добавленных элементов
+
+void editPipeRepair(pipe& x)
+{
+    cout << "Re-enter the 'under repair' parameter:" << endl;
+    x.repair=getInRange(0, 1);
+}
+
+void editStationWorkingWorkshops(station& x)
+{
+    cout << "Re-enter the number of working workshops:" << endl;
+    x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
+}
+
 int main()
 {
     struct pipe pipe1{};
@@ -193,41 +207,12 @@ int main()
             cout << "\n";
             break;
         case mainMenu::editPipe:
-            cout << "What do you want to change?\n";
-            cout << "Length:11 \nDiameter:12 \nRepair:13 \n";
-            /*uint32_t numberEditPipe = getUInt();
-            switch (numberEditPipe)
-            {
-                case pipeMenu::length:
-                    pipe1.length = getDouble();
-                    break;
-                case pipeMenu::diameter:
-                    pipe1.diameter = getDouble();
-                    break;
-                case pipeMenu::repair:
-                    cin >> pipe1.repair;
-                    break;
-            } */
+            system("cls");
+            editPipeRepair(pipe1);
             break;
         case mainMenu::editStation:
-            cout << "What do you want to change?\n";
-            cout << "Name:21 \nNumber of workshops:22 \nNumber of working workshops:23 \nEfficiency:24 \n";
-            /* uint32_t numberEditStation = getUInt();
-            switch (numberEditStation)
-            {
-            case stationMenu::name:
-                cin >> station1.name;
-                break;
-            case stationMenu::numOfWorkshops:
-                station1.numOfWorkshops = getUInt();
-                break;
-            case stationMenu::numOfWorkingWorkshops:
-                station1.numOfWorkingWorkshops = getInRange(0, station1.numOfWorkshops);
-                break;
-            case stationMenu::efficiency:
-                station1.efficiency = getInRange(0, 100);
-                break;
-            } */
+            system("cls");
+            editStationWorkingWorkshops(station1);
             break;
         case mainMenu::save:
             cout << "Six";
