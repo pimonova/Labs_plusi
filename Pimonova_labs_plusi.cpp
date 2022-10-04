@@ -11,8 +11,6 @@ using namespace std;
 // enums
 
 enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, save, download };
-enum pipeMenu {length = 11, diameter = 12, repair = 13};
-enum stationMenu { name = 21, numOfWorkshops = 22, numOfWorkingWorkshops= 23 , efficiency = 24};
 
 // structures
 
@@ -60,7 +58,7 @@ double getDouble()
         cin.clear();
         cin.ignore(10000, '\n');
         cin >> x;
-    } while (cin.fail() || cin.get() != '\n');
+    } while (cin.fail() || x<0 || cin.get() != '\n');
     return x;
 }
 
@@ -146,7 +144,7 @@ void addStations(station& x)
     x.numOfWorkshops = getUInt();
     cout << "Number of working workshops:\n";
     x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
-    x.efficiency = numOfWorkingWorkshops / numOfWorkshops * 100;
+    x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
 }
 
 // функции просмотра добавленных элементов
@@ -175,6 +173,7 @@ void editStationWorkingWorkshops(station& x)
 {
     cout << "Re-enter the number of working workshops:" << endl;
     x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
+    x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
 }
 
 // функции для работы с файлами
@@ -224,7 +223,7 @@ int main()
     {
         showMenu();
         cout << "Enter an operation: ";
-        uint32_t operation = getInRange();
+        uint32_t operation = getUInt();
 
         switch (operation)
         {
