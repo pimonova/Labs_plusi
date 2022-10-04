@@ -2,7 +2,6 @@
 //
 
 #include <iostream>
-#include <limits>
 #include <fstream>
 #include <string>
 
@@ -17,7 +16,7 @@ enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStatio
 struct pipe
 {
     double length, diameter;
-    bool repair;
+    uint32_t repair;
 };
 
 struct station
@@ -62,56 +61,6 @@ double getDouble()
     return x;
 }
 
-/*void skip()
-{
-    if (cin.fail())
-    {
-        cin.clear();
-        for (uint8_t ch; cin >> ch;)
-        {
-            if (isdigit(ch) || ch == '-')
-            {
-                cin.unget();
-                return;
-            }
-        } 
-    }
-    cout << ("No input");
-} */
-
-/* uint32_t getUInt() // Ввод беззнакового инта
-{
-    uint32_t x;
-    while (true)
-    {
-        if (cin >> x) return x;
-        cout << "Try again:\n";
-        skip();
-    }
-} */
-
-/* double_t getDouble() // Ввод вещественного числа
-{
-    double x;
-    while (true)
-    {
-        if (cin >> x) return x;
-        cout << "Try again:\n";
-        skip();
-    }
-} */
-
-/* bool getBool() // Ввод вещественного числа
-{
-    bool x;
-    while (true)
-    {
-        if (cin >> x) return x;
-        cout << "Try again:\n";
-        skip();
-    }
-} */
-
 uint32_t getInRange(uint8_t x1,uint8_t x2) // Ввод числа в диапазоне
 {
     uint32_t x = getUInt();
@@ -119,10 +68,11 @@ uint32_t getInRange(uint8_t x1,uint8_t x2) // Ввод числа в диапа�
     {
         if (x1<=x && x<=x2) return x;
         cout << "Try again:\n";
+        x = getUInt();
     }
 }
 
-// функции добалвния новых элементов
+// функции добавления новых элементов
 
 void addPipes(pipe& x)
 {
@@ -139,6 +89,7 @@ void addStations(station& x)
 {
     cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
     cout << "Name:\n";
+    //cin >> x.name;
     getline(cin, x.name);
     cout << "Number of workshops:\n";
     x.numOfWorkshops = getUInt();
@@ -223,7 +174,7 @@ int main()
     {
         showMenu();
         cout << "Enter an operation: ";
-        uint32_t operation = getUInt();
+        uint32_t operation = getInRange(0,7);
 
         switch (operation)
         {
@@ -259,9 +210,7 @@ int main()
             break;
         case mainMenu::download:
             system("cls");
-            char buff = 0;
             downloadFromFile(pipe1, station1);
-            cout << buff << endl;
             break;
         }
     }
