@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <limits>
+#include <fstream>
+#include <string>
+
 using namespace std;
 
 // enums
@@ -138,13 +141,12 @@ void addStations(station& x)
 {
     cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
     cout << "Name:\n";
-    cin >> x.name;
+    getline(cin, x.name);
     cout << "Number of workshops:\n";
     x.numOfWorkshops = getUInt();
     cout << "Number of working workshops:\n";
     x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
-    cout << "Efficiency (0-100):\n";
-    x.efficiency = getInRange(0, 100);
+    x.efficiency = numOfWorkingWorkshops / numOfWorkshops * 100;
 }
 
 // функции просмотра добавленных элементов
@@ -175,6 +177,44 @@ void editStationWorkingWorkshops(station& x)
     x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
 }
 
+// функции для работы с файлами
+
+void saveToFile(const pipe& p, const station& s)
+{
+    cout << "Enter the file name (.txt): ";
+    string oFileName;
+    cin >> oFileName;
+    ofstream fout;
+    fout.open(oFileName);
+    fout << s.name << endl << s.numOfWorkshops << endl << s.numOfWorkingWorkshops << endl << s.efficiency << endl;
+    fout << p.length << endl << p.diameter << endl << p.repair;
+    fout.close();
+    cout << "Data saved!" << endl;
+}
+
+void downloadFromFile( pipe& p, station& s)
+{
+    cout << "Enter the file name (.txt): ";
+    string iFileName;
+    cin >> iFileName;
+    ifstream fin;
+    fin.open(iFileName);
+    if (!fin.is_open()) 
+        cerr << "The file cannot be opened\n"; 
+    else
+    {
+        getline(fin, s.name);
+        fin >> s.numOfWorkshops;
+        fin >> s.numOfWorkingWorkshops;
+        fin >> s.efficiency;
+        fin >> p.length;
+        fin >> p.diameter;
+        fin >> p.repair;
+        fin.close();
+        cout << "Data uploaded!" << endl;
+    }
+}
+
 int main()
 {
     struct pipe pipe1{};
@@ -184,7 +224,7 @@ int main()
     {
         showMenu();
         cout << "Enter an operation: ";
-        uint32_t operation = getInRange(0, 7);
+        uint32_t operation = getInRange();
 
         switch (operation)
         {
@@ -215,10 +255,14 @@ int main()
             editStationWorkingWorkshops(station1);
             break;
         case mainMenu::save:
-            cout << "Six";
+            system("cls");
+            saveToFile(pipe1, station1);
             break;
         case mainMenu::download:
-            cout << "Seven";
+            system("cls");
+            char buff = 0;
+            downloadFromFile(pipe1, station1);
+            cout << buff << endl;
             break;
         }
     }
