@@ -37,39 +37,41 @@ void showMenu()
 
 // функции для проверки
 
+
 uint32_t getUInt()
 {
     uint32_t x;
-    do
+    while ((cin >> x).fail() || x == 0)
     {
+        cout << "Try again: ";
         cin.clear();
         cin.ignore(10000, '\n');
-        cin >> x;
-    } while (cin.fail() || cin.get() != '\n');
-    return x;
-}
-
-double getDouble()
-{
-    double x;
-    do
-    {
-        cin.clear();
-        cin.ignore(10000, '\n');
-        cin >> x;
-    } while (cin.fail() || x<0 || cin.get() != '\n');
-    return x;
-}
-
-uint32_t getInRange(uint8_t x1,uint8_t x2) // Ввод числа в диапазоне
-{
-    uint32_t x = getUInt();
-    while (true)
-    {
-        if (x1<=x && x<=x2) return x;
-        cout << "Try again:\n";
-        x = getUInt();
     }
+    return x;
+}
+
+double_t getDouble()
+{
+    double_t x;
+    while ((cin >> x).fail() || x <= 0)
+    {
+        cout << "Try again: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+    return x;
+}
+
+uint32_t getInRange(uint8_t x1, uint8_t x2)
+{
+    uint32_t x;
+    while ((cin >> x).fail() || x1 > x || x > x2)
+    {
+        cout << "Try again: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+    return x;
 }
 
 // функции добавления новых элементов
@@ -89,24 +91,24 @@ void addStations(station& x)
 {
     cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
     cout << "Name:\n";
-    //cin >> x.name;
+    cin >> ws;
     getline(cin, x.name);
     cout << "Number of workshops:\n";
     x.numOfWorkshops = getUInt();
     cout << "Number of working workshops:\n";
-    x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
+    x.numOfWorkingWorkshops = getInRange(1, x.numOfWorkshops);
     x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
 }
 
 // функции просмотра добавленных элементов
 
-void viewPipes(pipe x)
+void viewPipes(const pipe& x)
 {
     cout << "Pipe:\n";
     cout << "Length: " << x.length << " Diameter: " << x.diameter << " Repair: " << x.repair << endl;
 }
 
-void viewStations(station x)
+void viewStations(const station& x)
 {
     cout << "Station:\n";
     cout << "Name: " << x.name << " Number of workshops: " << x.numOfWorkshops << "\nNumber of working workshops: " << x.numOfWorkingWorkshops << " Efficiency: " << x.efficiency << endl;
@@ -118,26 +120,47 @@ void editPipeRepair(pipe& x)
 {
     cout << "Re-enter the 'under repair' parameter:" << endl;
     x.repair=getInRange(0, 1);
-}
+} 
 
 void editStationWorkingWorkshops(station& x)
 {
     cout << "Re-enter the number of working workshops:" << endl;
-    x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
+    x.numOfWorkingWorkshops = getInRange(1, x.numOfWorkshops);
     x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
-}
+} 
 
 // функции для работы с файлами
 
 void saveToFile(const pipe& p, const station& s)
 {
-    cout << "Enter the file name (.txt): ";
+    cout << "Enter the file name: ";
     string oFileName;
-    cin >> oFileName;
+    cin >> ws;
+    getline(cin,oFileName);
+    oFileName = oFileName + ".txt";
     ofstream fout;
     fout.open(oFileName);
-    fout << s.name << endl << s.numOfWorkshops << endl << s.numOfWorkingWorkshops << endl << s.efficiency << endl;
-    fout << p.length << endl << p.diameter << endl << p.repair;
+    bool sFlag = 0;
+    bool pFlag = 0;
+    if (!(s.numOfWorkshops == 0))
+    {
+        sFlag = 1;
+    }
+    if (!(p.diameter == 0))
+    {
+        pFlag = 1;
+    }
+    fout << sFlag << endl;
+    fout << pFlag << endl;
+    if (sFlag)
+    {
+        fout << s.name << endl << s.numOfWorkshops << endl << s.numOfWorkingWorkshops << endl << s.efficiency << endl;
+    }
+    if (pFlag)
+    {
+        fout << p.length << endl << p.diameter << endl << p.repair;
+    }
+
     fout.close();
     cout << "Data saved!" << endl;
 }
@@ -146,35 +169,67 @@ void downloadFromFile( pipe& p, station& s)
 {
     cout << "Enter the file name (.txt): ";
     string iFileName;
-    cin >> iFileName;
+    cin >> ws;
+    getline(cin,iFileName);
+    iFileName = iFileName + ".txt";
     ifstream fin;
     fin.open(iFileName);
     if (!fin.is_open()) 
         cerr << "The file cannot be opened\n"; 
     else
     {
-        getline(fin, s.name);
-        fin >> s.numOfWorkshops;
-        fin >> s.numOfWorkingWorkshops;
-        fin >> s.efficiency;
-        fin >> p.length;
-        fin >> p.diameter;
-        fin >> p.repair;
+        bool sFlag, pFlag;
+        fin >> sFlag;
+        fin >> pFlag;
+        if (sFlag == 1 && pFlag == 1)
+        {
+            fin >> ws;
+            getline(fin, s.name);
+            fin >> s.numOfWorkshops;
+            fin >> s.numOfWorkingWorkshops;
+            fin >> s.efficiency;
+            fin >> p.length;
+            fin >> p.diameter;
+            fin >> p.repair;
+            cout << "Data uploaded!" << endl;
+        }
+        if (sFlag == 0 && pFlag == 1)
+        {
+            fin >> p.length;
+            fin >> p.diameter;
+            fin >> p.repair;
+            cout << "Data uploaded!" << endl;
+        }
+
+        if (sFlag == 1 && pFlag == 0)
+        {
+            fin >> ws;
+            getline(fin, s.name);
+            fin >> s.numOfWorkshops;
+            fin >> s.numOfWorkingWorkshops;
+            fin >> s.efficiency;
+            cout << "Data uploaded!" << endl;
+        }
+
+        if (sFlag == 0 && pFlag == 0)
+        {
+            cout << "File is empty!" << endl;
+        }
         fin.close();
-        cout << "Data uploaded!" << endl;
     }
 }
 
 int main()
 {
-    struct pipe pipe1{};
-    struct station station1{};
+    pipe pipe1{};
+    station station1{};
 
     while (true)
     {
         showMenu();
         cout << "Enter an operation: ";
-        uint32_t operation = getInRange(0,7);
+        uint32_t operation;
+        operation = getInRange(0, 7);
 
         switch (operation)
         {
