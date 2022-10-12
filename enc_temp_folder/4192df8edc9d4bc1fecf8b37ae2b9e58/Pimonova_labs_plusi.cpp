@@ -160,22 +160,6 @@ void saveToFile(const pipe& p, const station& s)
     cout << "Data saved!" << endl;
 }
 
-void LoadCS(ifstream& fin, station& s)
-{
-    fin >> ws;
-    getline(fin, s.name);
-    fin >> s.numOfWorkshops;
-    fin >> s.numOfWorkingWorkshops;
-    fin >> s.efficiency;
-}
-
-void LoadPipe(ifstream& fin, pipe& p)
-{
-    fin >> p.length;
-    fin >> p.diameter;
-    fin >> p.repair;
-}
-
 void downloadFromFile( pipe& p, station& s)
 {
     cout << "Enter the file name (.txt): ";
@@ -196,12 +180,18 @@ void downloadFromFile( pipe& p, station& s)
             getline(fin, line);
             if (line == "station")
             {
-                LoadCS(fin, s);
+                fin >> ws;
+                getline(fin, s.name);
+                fin >> s.numOfWorkshops;
+                fin >> s.numOfWorkingWorkshops;
+                fin >> s.efficiency;
             }
 
             if (line == "pipe")
             {
-                LoadPipe(fin, p);
+                fin >> p.length;
+                fin >> p.diameter;
+                fin >> p.repair;
             }
         }
         
