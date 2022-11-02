@@ -37,22 +37,9 @@ void showMenu()
 
 // функции для проверки
 
-
-uint32_t getUInt()
+template <typename T>
+T getCorrect(T& x)
 {
-    uint32_t x;
-    while ((cin >> x).fail() || x == 0)
-    {
-        cout << "Try again: ";
-        cin.clear();
-        cin.ignore(10000, '\n');
-    }
-    return x;
-}
-
-double_t getDouble()
-{
-    double_t x;
     while ((cin >> x).fail() || x <= 0)
     {
         cout << "Try again: ";
@@ -80,9 +67,9 @@ void addPipes(pipe& x)
 {
     cout << "Add pipe parameters: length, diameter, repair\n";
     cout << "Length:\n";
-    x.length = getDouble();
+    getCorrect(x.length);
     cout << "Diameter:\n";
-    x.diameter = getDouble();
+    getCorrect(x.diameter);
     cout << "Repair:\n";
     x.repair = getInRange(0, 1);
 }
@@ -94,7 +81,7 @@ void addStations(station& x)
     cin >> ws;
     getline(cin, x.name);
     cout << "Number of workshops:\n";
-    x.numOfWorkshops = getUInt();
+    getCorrect(x.numOfWorkshops);
     cout << "Number of working workshops:\n";
     x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
     x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
