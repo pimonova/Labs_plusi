@@ -31,7 +31,7 @@ void showMenu()
 {
     cout << "Welcome to the main menu \nUse numbers to navigate:\n";
     cout << "\n";
-    cout << "Exit:0 \nAdd pipe:1 \nAdd station:2 \nView objects:3 \nEdit pipe:4 \nEdit station:5 \nSave:6 \nDownload:7 \n";
+    cout << "0. Exit \n1. Add pipe \n2. Add station \n3. View objects \n4. Edit pipe \n5. Edit station \n6. Save to file \n7. Download from file \n";
     cout << "\n";
 }
 
@@ -63,11 +63,47 @@ uint32_t getInRange(uint8_t x1, uint8_t x2)
 
 // функции добавления новых элементов
 
-void addPipes(pipe& x)
+void operator >> (istream& in, pipe& x)
 {
     cout << "Add pipe parameters: length, diameter, repair\n";
     cout << "Length:\n";
     getCorrect(x.length);
+    cout << "Diameter:\n";
+    getCorrect(x.diameter);
+    cout << "Repair:\n";
+    x.repair = getInRange(0, 1);
+}
+
+void operator >> (istream& in, station& x)
+{
+    cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
+    cout << "Name:\n";
+    in >> ws;
+    getline(in, x.name);
+    cout << "Number of workshops:\n";
+    getCorrect(x.numOfWorkshops);
+    cout << "Number of working workshops:\n";
+    x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
+    x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
+}
+
+void operator << (ostream& out, pipe& x)
+{
+    out << "Pipe:\n";
+    out << "Length: " << x.length << " Diameter: " << x.diameter << " Repair: " << x.repair << endl;
+}
+
+void operator << (ostream& out, station& x)
+{
+    out << "Station:\n";
+    out << "Name: " << x.name << " Number of workshops: " << x.numOfWorkshops << "\nNumber of working workshops: " << x.numOfWorkingWorkshops << " Efficiency: " << x.efficiency << endl;
+}
+
+/*void addPipes(pipe& x)
+{
+    cout << "Add pipe parameters: length, diameter, repair\n";
+    cout << "Length:\n";
+    getCorrect(x.length); 
     cout << "Diameter:\n";
     getCorrect(x.diameter);
     cout << "Repair:\n";
@@ -100,6 +136,7 @@ void viewStations(const station& x)
     cout << "Station:\n";
     cout << "Name: " << x.name << " Number of workshops: " << x.numOfWorkshops << "\nNumber of working workshops: " << x.numOfWorkingWorkshops << " Efficiency: " << x.efficiency << endl;
 }
+*/
 
 // функции изменения добавленных элементов
 
@@ -118,35 +155,6 @@ void editStationWorkingWorkshops(station& x)
 
 // функции для работы с файлами
 
-void saveToFile(const pipe& p, const station& s)
-{
-    cout << "Enter the file name: ";
-    string oFileName;
-    cin >> ws;
-    getline(cin,oFileName);
-    oFileName = oFileName + ".txt";
-    ofstream fout;
-    fout.open(oFileName);
-    if (!fout.is_open())
-        cerr << "The file cannot be opened\n";
-    else
-    {
-        string sFlag, pFlag;
-        if (!(s.numOfWorkshops == 0))
-        {
-            fout << "station" << endl << s.name << endl << s.numOfWorkshops << endl << s.numOfWorkingWorkshops << endl << s.efficiency << endl;
-        }
-        
-        if (!(p.diameter == 0))
-        {
-            fout << "pipe" << endl << p.length << endl << p.diameter << endl << p.repair << endl;
-        }
-    }
-
-    fout.close();
-    cout << "Data saved!" << endl;
-}
-
 void LoadCS(ifstream& fin, station& s)
 {
     fin >> ws;
@@ -161,6 +169,34 @@ void LoadPipe(ifstream& fin, pipe& p)
     fin >> p.length;
     fin >> p.diameter;
     fin >> p.repair;
+}
+
+void saveToFile(const pipe& p, const station& s)
+{
+    cout << "Enter the file name: ";
+    string oFileName;
+    cin >> ws;
+    getline(cin,oFileName);
+    oFileName = oFileName + ".txt";
+    ofstream fout;
+    fout.open(oFileName);
+    if (!fout.is_open())
+        cerr << "The file cannot be opened\n";
+    else
+    {
+        if (!(s.numOfWorkshops == 0))
+        {
+            fout << "station" << endl << s.name << endl << s.numOfWorkshops << endl << s.numOfWorkingWorkshops << endl << s.efficiency << endl;
+        }
+        
+        if (!(p.diameter == 0))
+        {
+            fout << "pipe" << endl << p.length << endl << p.diameter << endl << p.repair << endl;
+        }
+    }
+
+    fout.close();
+    cout << "Data saved!" << endl;
 }
 
 void downloadFromFile( pipe& p, station& s)
@@ -218,16 +254,20 @@ int main()
             break;
         case mainMenu::addPipe:
             system("cls");
-            addPipes(pipe1);
+            cin >> pipe1;
+            //addPipes(pipe1);
             break;
         case mainMenu::addStation:
             system("cls");
-            addStations(station1);
+            cin >> station1;
+            //addStations(station1);
             break;
         case mainMenu::viewObjects:
             system("cls");
-            viewPipes(pipe1);
-            viewStations(station1);
+            cout << pipe1;
+            cout << station1;
+            //viewPipes(pipe1);
+            //viewStations(station1);
             cout << "\n";
             break;
         case mainMenu::editPipe:
