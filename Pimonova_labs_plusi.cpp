@@ -1,9 +1,14 @@
 ﻿// Pimonova_labs_plusi.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include "CPipe.h"
+#include "CStation.h"
+#include "Utils.h"
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <unordered_map>
+
 
 using namespace std;
 
@@ -11,151 +16,34 @@ using namespace std;
 
 enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, save, download };
 
-// structures
-
-struct pipe
-{
-    double length, diameter;
-    uint32_t repair;
-};
-
-struct station
-{
-    string name;
-    uint32_t numOfWorkshops, numOfWorkingWorkshops, efficiency;
-};
-
 //functions
 
 void showMenu()
 {
     cout << "Welcome to the main menu \nUse numbers to navigate:\n";
     cout << "\n";
-    cout << "0. Exit \n1. Add pipe \n2. Add station \n3. View objects \n4. Edit pipe \n5. Edit station \n6. Save to file \n7. Download from file \n";
+    cout << "0. Exit \n1. Add pipe \n2. Add station \n3. View all objects \n4. Edit pipe \n5. Edit station \n6. Save to file \n7. Download from file \n";
     cout << "\n";
 }
 
-// функции для проверки
-
-template <typename T>
-T getCorrect(T& x)
-{
-    while ((cin >> x).fail() || x <= 0)
-    {
-        cout << "Try again: ";
-        cin.clear();
-        cin.ignore(10000, '\n');
-    }
-    return x;
-}
-
-uint32_t getInRange(uint8_t x1, uint8_t x2)
-{
-    uint32_t x;
-    while ((cin >> x).fail() || x1 > x || x > x2)
-    {
-        cout << "Try again: ";
-        cin.clear();
-        cin.ignore(10000, '\n');
-    }
-    return x;
-}
-
-// функции добавления новых элементов
-
-void operator >> (istream& in, pipe& x)
-{
-    cout << "Add pipe parameters: length, diameter, repair\n";
-    cout << "Length:\n";
-    getCorrect(x.length);
-    cout << "Diameter:\n";
-    getCorrect(x.diameter);
-    cout << "Repair:\n";
-    x.repair = getInRange(0, 1);
-}
-
-void operator >> (istream& in, station& x)
-{
-    cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
-    cout << "Name:\n";
-    in >> ws;
-    getline(in, x.name);
-    cout << "Number of workshops:\n";
-    getCorrect(x.numOfWorkshops);
-    cout << "Number of working workshops:\n";
-    x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
-    x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
-}
-
-void operator << (ostream& out, pipe& x)
-{
-    out << "Pipe:\n";
-    out << "Length: " << x.length << " Diameter: " << x.diameter << " Repair: " << x.repair << endl;
-}
-
-void operator << (ostream& out, station& x)
-{
-    out << "Station:\n";
-    out << "Name: " << x.name << " Number of workshops: " << x.numOfWorkshops << "\nNumber of working workshops: " << x.numOfWorkingWorkshops << " Efficiency: " << x.efficiency << endl;
-}
-
-/*void addPipes(pipe& x)
-{
-    cout << "Add pipe parameters: length, diameter, repair\n";
-    cout << "Length:\n";
-    getCorrect(x.length); 
-    cout << "Diameter:\n";
-    getCorrect(x.diameter);
-    cout << "Repair:\n";
-    x.repair = getInRange(0, 1);
-}
-
-void addStations(station& x)
-{
-    cout << "Add the parameters of the compressor station:\nname, number of workshops, number of working workshops, efficiency \n";
-    cout << "Name:\n";
-    cin >> ws;
-    getline(cin, x.name);
-    cout << "Number of workshops:\n";
-    getCorrect(x.numOfWorkshops);
-    cout << "Number of working workshops:\n";
-    x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
-    x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
-}
-
-// функции просмотра добавленных элементов
-
-void viewPipes(const pipe& x)
-{
-    cout << "Pipe:\n";
-    cout << "Length: " << x.length << " Diameter: " << x.diameter << " Repair: " << x.repair << endl;
-}
-
-void viewStations(const station& x)
-{
-    cout << "Station:\n";
-    cout << "Name: " << x.name << " Number of workshops: " << x.numOfWorkshops << "\nNumber of working workshops: " << x.numOfWorkingWorkshops << " Efficiency: " << x.efficiency << endl;
-}
-*/
-
 // функции изменения добавленных элементов
 
-void editPipeRepair(pipe& x)
+/*void editPipeRepair(CPipe& x)
 {
     cout << "Re-enter the 'under repair' parameter:" << endl;
     x.repair=getInRange(0, 1);
 } 
 
-void editStationWorkingWorkshops(station& x)
+void editStationWorkingWorkshops(CStation& x)
 {
     cout << "Re-enter the number of working workshops:" << endl;
     x.numOfWorkingWorkshops = getInRange(1, x.numOfWorkshops);
     x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
-} 
+}
 
 // функции для работы с файлами
 
-void LoadCS(ifstream& fin, station& s)
+void LoadCS(ifstream& fin, CStation& s)
 {
     fin >> ws;
     getline(fin, s.name);
@@ -164,14 +52,14 @@ void LoadCS(ifstream& fin, station& s)
     fin >> s.efficiency;
 }
 
-void LoadPipe(ifstream& fin, pipe& p)
+void LoadPipe(ifstream& fin, CPipe& p)
 {
     fin >> p.length;
     fin >> p.diameter;
     fin >> p.repair;
 }
 
-void saveToFile(const pipe& p, const station& s)
+void saveToFile(const CPipe& p, const CStation& s)
 {
     cout << "Enter the file name: ";
     string oFileName;
@@ -199,7 +87,7 @@ void saveToFile(const pipe& p, const station& s)
     cout << "Data saved!" << endl;
 }
 
-void downloadFromFile( pipe& p, station& s)
+void downloadFromFile( CPipe& p, CStation& s)
 {
     cout << "Enter the file name (.txt): ";
     string iFileName;
@@ -232,12 +120,40 @@ void downloadFromFile( pipe& p, station& s)
         
         fin.close();
     }
+} */
+
+CPipe& selectPipe(unordered_map<int, CPipe>& mP)
+{
+    cout << "Enter pipe ID: ";
+    uint32_t userID;
+    getCorrect(userID);
+    while (mP.find(userID)==mP.end())
+    {
+        cout << "Error! There is no pipe with this id\n";
+        cout << "Enter pipe ID: ";
+        getCorrect(userID);
+    }
+    return mP[userID];
+}
+
+CStation& selectStation(unordered_map<int, CStation>& mS)
+{
+    cout << "Enter station ID: ";
+    uint32_t userID;
+    getCorrect(userID);
+    while (mS.find(userID) == mS.end())
+    {
+        cout << "Error! There is no station with this id\n";
+        cout << "Enter station ID: ";
+        getCorrect(userID);
+    }
+    return mS[userID];
 }
 
 int main()
 {
-    pipe pipe1{};
-    station station1{};
+    unordered_map<int, CPipe> manyPipes;
+    unordered_map<int, CStation> manyStations;
 
     while (true)
     {
@@ -253,39 +169,58 @@ int main()
             exit(0);
             break;
         case mainMenu::addPipe:
+        {
             system("cls");
-            cin >> pipe1;
-            //addPipes(pipe1);
+            CPipe pipe;
+            cin >> pipe;
+            manyPipes.insert({ pipe.getPipeID(), pipe });
             break;
+        }
         case mainMenu::addStation:
+        {
             system("cls");
-            cin >> station1;
-            //addStations(station1);
+            CStation station;
+            cin >> station;
+            manyStations.insert({ station.getStationID(), station });
             break;
+        }
         case mainMenu::viewObjects:
+        {
             system("cls");
-            cout << pipe1;
-            cout << station1;
-            //viewPipes(pipe1);
-            //viewStations(station1);
-            cout << "\n";
+            if (manyPipes.size()!= 0)
+            {
+                for (const auto& [pID, p] : manyPipes)
+                {
+                    cout << p << endl;
+                }
+
+            }
+            if (manyStations.size() != 0)
+            {
+                for (const auto& [sID, s] : manyStations)
+                {
+                    cout << s << endl;
+                }
+
+            }
             break;
-        case mainMenu::editPipe:
+        }
+        /*case mainMenu::editPipe:
             system("cls");
-            editPipeRepair(pipe1);
+            editPipeRepair(pipe);
             break;
         case mainMenu::editStation:
             system("cls");
-            editStationWorkingWorkshops(station1);
+            editStationWorkingWorkshops(station);
             break;
         case mainMenu::save:
             system("cls");
-            saveToFile(pipe1, station1);
+            saveToFile(pipe, station);
             break;
         case mainMenu::download:
             system("cls");
-            downloadFromFile(pipe1, station1);
-            break;
+            downloadFromFile(pipe, station);
+            break;*/
         }
     }
 
