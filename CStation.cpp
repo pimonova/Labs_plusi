@@ -17,6 +17,12 @@ std::istream& operator >> (std::istream& in, CStation& x)
     x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
     return in;
 }
+ 
+/*std::ofstream& operator << (std::ofstream& out, const CStation& x)
+{
+    out << x.name << std::endl << x.numOfWorkshops << std::endl << x.numOfWorkingWorkshops << std::endl << x.efficiency << std::endl;
+    return out;
+}*/
 
 std::ostream& operator << (std::ostream& out, const CStation& x)
 {
@@ -38,4 +44,9 @@ CStation::CStation()
 uint32_t CStation::getStationID()
 {
     return stationID;
+}
+
+void CStation::setStationID(uint32_t id)
+{
+    stationID = id;
 }

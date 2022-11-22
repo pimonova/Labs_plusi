@@ -8,13 +8,14 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include "Pimonova_labs_plusi.h"
 
 
 using namespace std;
 
 // enums
 
-enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, save, download };
+enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, pipeSearch, stationSearch, save, download };
 
 //functions
 
@@ -22,13 +23,17 @@ void showMenu()
 {
     cout << "Welcome to the main menu \nUse numbers to navigate:\n";
     cout << "\n";
-    cout << "0. Exit \n1. Add pipe \n2. Add station \n3. View all objects \n4. Edit pipe \n5. Edit station \n6. Save to file \n7. Download from file \n";
+    cout << "0. Exit \n1. Add pipe" << endl
+         << "2. Add station \n3. View all objects" << endl
+         << "4. Edit pipe \n5. Edit station" << endl
+         << "6. Pipe search\n7. Station search" << endl
+         << "8. Save to file \n9. Download from file \n";
     cout << "\n";
 }
 
 // функции изменения добавленных элементов
 
-/*void editPipeRepair(CPipe& x)
+void editPipeRepair(CPipe& x)
 {
     cout << "Re-enter the 'under repair' parameter:" << endl;
     x.repair=getInRange(0, 1);
@@ -43,8 +48,11 @@ void editStationWorkingWorkshops(CStation& x)
 
 // функции для работы с файлами
 
-void LoadCS(ifstream& fin, CStation& s)
+void LoadStation(ifstream& fin, CStation& s)
 {
+    uint32_t id;
+    fin >> id;
+    s.setStationID(id);
     fin >> ws;
     getline(fin, s.name);
     fin >> s.numOfWorkshops;
@@ -54,12 +62,15 @@ void LoadCS(ifstream& fin, CStation& s)
 
 void LoadPipe(ifstream& fin, CPipe& p)
 {
+    uint32_t id;
+    fin >> id;
+    p.setPipeID(id);
     fin >> p.length;
     fin >> p.diameter;
     fin >> p.repair;
 }
 
-void saveToFile(const CPipe& p, const CStation& s)
+void saveToFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation>& mS)
 {
     cout << "Enter the file name: ";
     string oFileName;
@@ -72,14 +83,23 @@ void saveToFile(const CPipe& p, const CStation& s)
         cerr << "The file cannot be opened\n";
     else
     {
-        if (!(s.numOfWorkshops == 0))
+        if (mP.size() != 0)
         {
-            fout << "station" << endl << s.name << endl << s.numOfWorkshops << endl << s.numOfWorkingWorkshops << endl << s.efficiency << endl;
+            for (auto& [pID, p] : mP)
+            {
+                fout << "pipe" << endl;
+                fout << p.getPipeID() << std::endl << p.length << std::endl << p.diameter << std::endl << p.repair << std::endl;
+            }
+
         }
-        
-        if (!(p.diameter == 0))
+        if (mS.size() != 0)
         {
-            fout << "pipe" << endl << p.length << endl << p.diameter << endl << p.repair << endl;
+            for (auto& [sID, s] : mS)
+            {
+                fout << "station" << endl;
+                fout << s.getStationID() << std::endl << s.name << endl << s.numOfWorkshops << endl << s.numOfWorkingWorkshops << endl << s.efficiency << endl;
+            }
+
         }
     }
 
@@ -87,8 +107,10 @@ void saveToFile(const CPipe& p, const CStation& s)
     cout << "Data saved!" << endl;
 }
 
-void downloadFromFile( CPipe& p, CStation& s)
+void downloadFromFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation>& mS)
 {
+    CPipe p;
+    CStation s;
     cout << "Enter the file name (.txt): ";
     string iFileName;
     cin >> ws;
@@ -107,12 +129,14 @@ void downloadFromFile( CPipe& p, CStation& s)
             getline(fin, line);
             if (line == "station")
             {
-                LoadCS(fin, s);
+                LoadStation(fin, s);
+                mS.insert({ s.getStationID(), s });
             }
 
             if (line == "pipe")
             {
                 LoadPipe(fin, p);
+                mP.insert({ p.getPipeID(), p });
             }
         }
         
@@ -120,7 +144,7 @@ void downloadFromFile( CPipe& p, CStation& s)
         
         fin.close();
     }
-} */
+} 
 
 CPipe& selectPipe(unordered_map<int, CPipe>& mP)
 {
@@ -160,7 +184,7 @@ int main()
         showMenu();
         cout << "Enter an operation: ";
         uint32_t operation;
-        operation = getInRange(0, 7);
+        operation = getInRange(0, 9);
 
         switch (operation)
         {
@@ -187,13 +211,17 @@ int main()
         case mainMenu::viewObjects:
         {
             system("cls");
-            if (manyPipes.size()!= 0)
+            if (manyPipes.size() != 0)
             {
                 for (const auto& [pID, p] : manyPipes)
                 {
                     cout << p << endl;
                 }
 
+            }
+            else
+            {
+                cout << "There are no pipes!";
             }
             if (manyStations.size() != 0)
             {
@@ -203,24 +231,34 @@ int main()
                 }
 
             }
+            else
+            {
+                cout << "There are no stations!";
+            }
             break;
         }
-        /*case mainMenu::editPipe:
+        case mainMenu::editPipe:
             system("cls");
-            editPipeRepair(pipe);
+            editPipeRepair(selectPipe(manyPipes));
             break;
         case mainMenu::editStation:
             system("cls");
-            editStationWorkingWorkshops(station);
+            editStationWorkingWorkshops(selectStation(manyStations));
             break;
-        case mainMenu::save:
+            case mainMenu::save:
             system("cls");
-            saveToFile(pipe, station);
+            saveToFile(manyPipes, manyStations);
             break;
         case mainMenu::download:
             system("cls");
-            downloadFromFile(pipe, station);
-            break;*/
+            downloadFromFile(manyPipes, manyStations);
+            break;
+        case mainMenu::pipeSearch:
+
+            break;
+        case mainMenu::stationSearch:
+
+            break;
         }
     }
 
