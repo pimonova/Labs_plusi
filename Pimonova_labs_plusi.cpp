@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
 #include "Pimonova_labs_plusi.h"
 
 
@@ -16,7 +17,7 @@ using namespace std;
 
 // enums
 
-enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, pipeSearch, stationSearch, save, download, deletePipe, deleteStation };
+enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, pipeSearch, stationSearch, save, download, deletePipe, deleteStation, packageEdit };
 
 //functions
 
@@ -31,7 +32,7 @@ void showMenu()
          << "6. Pipe search\n7. Station search" << endl
          << "8. Save to file \n9. Download from file \n"
          << "10. Delete pipe \n11. Delete station \n"
-         << "11. Package editing of pipes\n";
+         << "12. Package editing of pipes\n";
     cout << "\n";
 }
 
@@ -268,6 +269,99 @@ vector<uint32_t> findPipeByFilter(unordered_map<int, CPipe>& mP, Filter2<T> f, T
     return result;
 }
 
+vector<uint32_t> searchPipe(unordered_map<int, CPipe>& mP)
+{
+    vector<uint32_t> result{};
+    cout << "Enter the search parameter: \n"
+        << "1 - find pipe by IDs; \n"
+        << "2 - find pipe by the repair\n";
+    if (getInRange(1, 2) == 1)
+    {
+        uint32_t pID;
+        cout << "Enter pipe IDs: ";
+        getCorrect(pID);
+        for (uint32_t i : findPipeByFilter(mP, checkByID, pID))
+        {
+            cout << mP[i];
+        }
+        result = findPipeByFilter(mP, checkByID, pID);
+    }
+    else
+    {
+        uint32_t repair;
+        cout << "Enter marker of repair: ";
+        repair = getInRange(0, 1);
+        for (uint32_t i : findPipeByFilter(mP, checkByRepair, repair))
+        {
+            cout << mP[i];
+        }
+        result = findPipeByFilter(mP, checkByRepair, repair);
+    }
+
+    return result;
+}
+
+// пакетное редактирование
+
+void PacketEditPipe(unordered_map<int, CPipe>& mP)
+{
+    vector<uint32_t> allResult;
+    allResult = searchPipe(mP);
+    
+    cout << "Enter the edit parameter: \n"
+         << "1 - edit all find pipes; \n"
+         << "2 - edit some find pipes\n";
+    if (getInRange(1,2) == 1)
+    {
+        cout << "Enter the repair parameter: \n"
+             << "1 - all pipes are working; \n"
+             << "2 - all pipes under repair\n";
+        if (getInRange(1, 2) == 1)
+        {
+            for (auto& id : allResult)
+                mP[id].repair = 1;
+        }
+        else
+        {
+            for (auto& id : allResult)
+                mP[id].repair = 0;
+        }
+    }
+    else
+    {
+        vector <int> someResult;
+        while (true)
+        {
+            cout << "Enter pipe's id to edit or 0 to complete: ";
+            uint32_t i;
+            i = getInRange(0,*max_element(allResult.begin(), allResult.end()));
+            if (i)
+            {
+                if (mP.find(i) == mP.end())
+                    cout << "Error! There is no pipe with this id\n";
+                else
+                    someResult.push_back(i);
+            }
+            else
+                break;
+        }
+        
+        cout << "Enter the repair parameter: \n"
+            << "1 - all pipes are working; \n"
+            << "2 - all pipes under repair\n";
+        if (getInRange(1, 2) == 1)
+        {
+            for (auto& id : someResult)
+                mP[id].repair = 1;
+        }
+        else
+        {
+            for (auto& id : someResult)
+                mP[id].repair = 0;
+        }
+    }
+}
+
 int main()
 {
     unordered_map<int, CPipe> manyPipes;
@@ -278,7 +372,7 @@ int main()
         showMenu();
         cout << "Enter an operation: ";
         uint32_t operation;
-        operation = getInRange(0, 11);
+        operation = getInRange(0, 12);
 
         switch (operation)
         {
@@ -349,29 +443,8 @@ int main()
             break;
         case mainMenu::pipeSearch:
             system("cls");
-            cout << "Enter the search parameter: \n"
-                << "1 - find pipe by IDs; \n"
-                << "2 - find pipe by the repair\n";
-            if (getInRange(1, 2) == 1)
-            {
-                uint32_t pID;
-                cout << "Enter pipe IDs: ";
-                getCorrect(pID);
-                for (uint32_t i : findPipeByFilter(manyPipes, checkByID, pID))
-                {
-                    cout << manyPipes[i];
-                }
-            }
-            else
-            {
-                uint32_t repair;
-                cout << "Enter marker of repair: ";
-                repair = getInRange(0,1);
-                for (uint32_t i : findPipeByFilter(manyPipes, checkByRepair, repair))
-                {
-                    cout << manyPipes[i];
-                }
-            }
+            searchPipe(manyPipes);
+
             break;
         case mainMenu::stationSearch:
         {
@@ -409,6 +482,10 @@ int main()
         case mainMenu::deleteStation:
             system("cls");
             deleteOneStaton(manyStations);
+            break;
+        case mainMenu::packageEdit:
+            system("cls");
+            PacketEditPipe(manyPipes);
             break;
         }
     }
