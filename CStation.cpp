@@ -1,5 +1,6 @@
 #include "CStation.h"
 #include <iostream>
+#include <fstream>
 #include "Utils.h"
 
 uint32_t CStation::newStationID = 0;
@@ -18,11 +19,22 @@ std::istream& operator >> (std::istream& in, CStation& x)
     return in;
 }
  
-/*std::ofstream& operator << (std::ofstream& out, const CStation& x)
+std::ofstream& operator << (std::ofstream& out, CStation& x)
 {
-    out << x.name << std::endl << x.numOfWorkshops << std::endl << x.numOfWorkingWorkshops << std::endl << x.efficiency << std::endl;
+    out << x.stationID << std::endl << x.name << std::endl << x.numOfWorkshops << std::endl << x.numOfWorkingWorkshops << std::endl << x.efficiency;
     return out;
-}*/
+}
+
+std::ifstream& operator>>(std::ifstream& in, CStation& x)
+{
+    in >> x.stationID;
+    in >> std::ws;
+    getline(in, x.name);
+    in >> x.numOfWorkshops;
+    in >> x.numOfWorkingWorkshops;
+    in >> x.efficiency;
+    return in;
+}
 
 std::ostream& operator << (std::ostream& out, const CStation& x)
 {
@@ -44,9 +56,4 @@ CStation::CStation()
 uint32_t CStation::getStationID()
 {
     return stationID;
-}
-
-void CStation::setStationID(uint32_t id)
-{
-    stationID = id;
 }

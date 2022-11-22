@@ -15,4 +15,4 @@ T getCorrect(T& x)
     return x;
 }
 
-uint32_t getInRange(uint8_t x1, uint8_t x2);
+uint32_t getInRange(uint32_t x1, uint32_t x2);

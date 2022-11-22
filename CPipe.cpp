@@ -1,5 +1,6 @@
 #include "CPipe.h"
 #include <iostream>
+#include <fstream>
 #include "Utils.h"
 #include <string>
 
@@ -17,11 +18,20 @@ std::istream& operator >> (std::istream& in, CPipe& x)
     return in;
 }
 
-/*std::ofstream& operator << (std::ofstream& out, const CPipe& x)
+std::ofstream& operator << (std::ofstream& out, const CPipe& x)
 {
-    out << x.length << std::endl << x.diameter << std::endl << x.repair << std::endl;
+    out << x.pipeID << std::endl << x.length << std::endl << x.diameter << std::endl << x.repair;
     return out;
-}*/
+}
+
+std::ifstream& operator>>(std::ifstream& in, CPipe& x)
+{
+    in >> x.pipeID;
+    in >> x.length;
+    in >> x.diameter;
+    in >> x.repair;
+    return in;
+}
 
 std::ostream& operator << (std::ostream& out, const CPipe& x)
 {
@@ -42,9 +52,4 @@ CPipe::CPipe()
 uint32_t CPipe::getPipeID() const
 {
     return pipeID;
-}
-
-void CPipe::setPipeID(uint32_t id)
-{
-    pipeID = id;
 }

@@ -14,11 +14,11 @@ public:
 
 	friend std::ostream& operator << (std::ostream& out, const CStation& x);
 	friend std::istream& operator >> (std::istream& in, CStation& x);
-	//friend std::ofstream& operator << (std::ofstream& out, const CStation& x);
+    friend std::ofstream& operator << (std::ofstream& out, CStation& x);
+	friend std::ifstream& operator >> (std::ifstream& in, CStation& x);
 
 	CStation();
 
 	uint32_t getStationID();
-	void setStationID(uint32_t);
 };
 

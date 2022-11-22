@@ -4,7 +4,7 @@
 
 
 
-uint32_t getInRange(uint8_t x1, uint8_t x2)
+uint32_t getInRange(uint32_t x1, uint32_t x2)
 {
     uint32_t x;
     while ((std::cin >> x).fail() || x1 > x || x > x2)

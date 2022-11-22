@@ -53,28 +53,6 @@ void editStationWorkingWorkshops(CStation& x)
 
 // функции для работы с файлами
 
-void LoadStation(ifstream& fin, CStation& s)
-{
-    uint32_t id;
-    fin >> id;
-    s.setStationID(id);
-    fin >> ws;
-    getline(fin, s.name);
-    fin >> s.numOfWorkshops;
-    fin >> s.numOfWorkingWorkshops;
-    fin >> s.efficiency;
-}
-
-void LoadPipe(ifstream& fin, CPipe& p)
-{
-    uint32_t id;
-    fin >> id;
-    p.setPipeID(id);
-    fin >> p.length;
-    fin >> p.diameter;
-    fin >> p.repair;
-}
-
 void saveToFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation>& mS)
 {
     cout << "Enter the file name: ";
@@ -93,7 +71,7 @@ void saveToFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation>& mS)
             for (auto& [pID, p] : mP)
             {
                 fout << "pipe" << endl;
-                fout << p.getPipeID() << std::endl << p.length << std::endl << p.diameter << std::endl << p.repair << std::endl;
+                fout << p << endl;
             }
 
         }
@@ -102,7 +80,7 @@ void saveToFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation>& mS)
             for (auto& [sID, s] : mS)
             {
                 fout << "station" << endl;
-                fout << s.getStationID() << std::endl << s.name << endl << s.numOfWorkshops << endl << s.numOfWorkingWorkshops << endl << s.efficiency << endl;
+                fout << s << endl;
             }
 
         }
@@ -134,13 +112,13 @@ void downloadFromFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation
             getline(fin, line);
             if (line == "station")
             {
-                LoadStation(fin, s);
+                fin >> s;
                 mS.insert({ s.getStationID(), s });
             }
 
             if (line == "pipe")
             {
-                LoadPipe(fin, p);
+                fin >> p;
                 mP.insert({ p.getPipeID(), p });
             }
         }
@@ -444,7 +422,6 @@ int main()
         case mainMenu::pipeSearch:
             system("cls");
             searchPipe(manyPipes);
-
             break;
         case mainMenu::stationSearch:
         {
