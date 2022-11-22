@@ -8,6 +8,7 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include "Pimonova_labs_plusi.h"
 
 
@@ -15,19 +16,22 @@ using namespace std;
 
 // enums
 
-enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, pipeSearch, stationSearch, save, download };
+enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, pipeSearch, stationSearch, save, download, deletePipe, deleteStation };
 
 //functions
 
 void showMenu()
 {
-    cout << "Welcome to the main menu \nUse numbers to navigate:\n";
+    cout << endl;
+    cout << "Welcome to the main menu! \nUse numbers to navigate:\n";
     cout << "\n";
     cout << "0. Exit \n1. Add pipe" << endl
          << "2. Add station \n3. View all objects" << endl
          << "4. Edit pipe \n5. Edit station" << endl
          << "6. Pipe search\n7. Station search" << endl
-         << "8. Save to file \n9. Download from file \n";
+         << "8. Save to file \n9. Download from file \n"
+         << "10. Delete pipe \n11. Delete station \n"
+         << "11. Package editing of pipes\n";
     cout << "\n";
 }
 
@@ -146,6 +150,8 @@ void downloadFromFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation
     }
 } 
 
+// выбор объектов
+
 CPipe& selectPipe(unordered_map<int, CPipe>& mP)
 {
     cout << "Enter pipe ID: ";
@@ -174,6 +180,94 @@ CStation& selectStation(unordered_map<int, CStation>& mS)
     return mS[userID];
 }
 
+// удаление единицы объекта
+
+void deleteOnePipe(unordered_map<int, CPipe>& mP)
+{
+    CPipe p = selectPipe(mP);
+    mP.erase(p.getPipeID());
+    cout << "Pipe removed!" << endl;
+}
+
+void deleteOneStaton(unordered_map<int, CStation>& mS)
+{
+    CStation s = selectStation(mS);
+    mS.erase(s.getStationID());
+    cout << "Station removed!" << endl;
+}
+
+// поиск по станциям
+
+template<typename T>
+using Filter1 = bool(*)(const CStation& s, T parameter);
+
+bool checkByName(const CStation& s, string parameter)
+{
+    return s.name == parameter;
+}
+
+bool checkByNotWorkingWorkshops(const CStation& s, double parameter)
+{
+    return (double((s.numOfWorkshops -s.numOfWorkingWorkshops) * 100) / s.numOfWorkshops) >= parameter;
+}
+
+template<typename T>
+vector<uint32_t> findStationByFilter(unordered_map<int, CStation>& mS, Filter1<T> f, T parameter)
+{
+    vector<uint32_t> result;
+
+    for (auto& [sID, s] : mS)
+    {
+        if (f(s, parameter))
+        {
+            result.push_back(s.getStationID());
+        }
+    }
+
+    if (result.empty())
+    {
+        cout << "There are no pipes wuth this parameter\n";
+    }
+
+    return result;
+}
+
+// поиск по трубам
+
+template<typename T>
+using Filter2 = bool(*)(const CPipe& p, T parameter);
+
+bool checkByID(const CPipe& p, uint32_t parameter)
+{
+    return p.getPipeID() >= parameter;
+}
+
+bool checkByRepair(const CPipe& p, uint32_t parameter)
+{
+    return p.repair == parameter;
+}
+
+template<typename T>
+vector<uint32_t> findPipeByFilter(unordered_map<int, CPipe>& mP, Filter2<T> f, T parameter)
+{
+    vector<uint32_t> result;
+
+    for (auto& [pID, p] : mP)
+    {
+        if (f(p, parameter))
+        {
+            result.push_back(p.getPipeID());
+        }
+    }
+
+    if (result.empty())
+    {
+        cout << "There are no pipes wuth this parameter\n";
+    }
+
+    return result;
+}
+
 int main()
 {
     unordered_map<int, CPipe> manyPipes;
@@ -184,7 +278,7 @@ int main()
         showMenu();
         cout << "Enter an operation: ";
         uint32_t operation;
-        operation = getInRange(0, 9);
+        operation = getInRange(0, 11);
 
         switch (operation)
         {
@@ -254,10 +348,67 @@ int main()
             downloadFromFile(manyPipes, manyStations);
             break;
         case mainMenu::pipeSearch:
-
+            system("cls");
+            cout << "Enter the search parameter: \n"
+                << "1 - find pipe by IDs; \n"
+                << "2 - find pipe by the repair\n";
+            if (getInRange(1, 2) == 1)
+            {
+                uint32_t pID;
+                cout << "Enter pipe IDs: ";
+                getCorrect(pID);
+                for (uint32_t i : findPipeByFilter(manyPipes, checkByID, pID))
+                {
+                    cout << manyPipes[i];
+                }
+            }
+            else
+            {
+                uint32_t repair;
+                cout << "Enter marker of repair: ";
+                repair = getInRange(0,1);
+                for (uint32_t i : findPipeByFilter(manyPipes, checkByRepair, repair))
+                {
+                    cout << manyPipes[i];
+                }
+            }
             break;
         case mainMenu::stationSearch:
-
+        {
+            system("cls");
+            cout << "Enter the search parameter: \n"
+                << "1 - find station by name; \n"
+                << "2 - find station by the percentage of unused workshops\n";
+            if (getInRange(1, 2) == 1)
+            {
+                string name;
+                cout << "Enter station name: ";
+                cin >> name;
+                for (uint32_t i : findStationByFilter(manyStations, checkByName, name))
+                {
+                    cout << manyStations[i];
+                }
+            }
+            else
+            {
+                double percent;
+                cout << "Enter percent of not working workshops: ";
+                getCorrect(percent);
+                for (uint32_t i : findStationByFilter(manyStations, checkByNotWorkingWorkshops, percent))
+                {
+                    cout << manyStations[i];
+                }
+            }
+            
+            break;
+        }
+        case mainMenu::deletePipe:
+            system("cls");
+            deleteOnePipe(manyPipes);
+            break;
+        case mainMenu::deleteStation:
+            system("cls");
+            deleteOneStaton(manyStations);
             break;
         }
     }
