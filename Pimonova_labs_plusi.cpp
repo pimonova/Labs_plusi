@@ -182,7 +182,7 @@ using Filter1 = bool(*)(const CStation& s, T parameter);
 
 bool checkByName(const CStation& s, string parameter)
 {
-    return s.name == parameter;
+    return s.name.find(parameter) != string::npos;
 }
 
 bool checkByNotWorkingWorkshops(const CStation& s, double parameter)
@@ -241,7 +241,7 @@ vector<uint32_t> findPipeByFilter(unordered_map<int, CPipe>& mP, Filter2<T> f, T
 
     if (result.empty())
     {
-        cout << "There are no pipes wuth this parameter\n";
+        cout << "There are no pipes with this parameter\n";
     }
 
     return result;
@@ -258,22 +258,22 @@ vector<uint32_t> searchPipe(unordered_map<int, CPipe>& mP)
         uint32_t pID;
         cout << "Enter pipe IDs: ";
         getCorrect(pID);
-        for (uint32_t i : findPipeByFilter(mP, checkByID, pID))
+        result = findPipeByFilter(mP, checkByID, pID);
+        for (uint32_t i : result)
         {
             cout << mP[i];
         }
-        result = findPipeByFilter(mP, checkByID, pID);
     }
     else
     {
         uint32_t repair;
         cout << "Enter marker of repair: ";
         repair = getInRange(0, 1);
-        for (uint32_t i : findPipeByFilter(mP, checkByRepair, repair))
+        result = findPipeByFilter(mP, checkByRepair, repair);
+        for (uint32_t i : result)
         {
             cout << mP[i];
         }
-        result = findPipeByFilter(mP, checkByRepair, repair);
     }
 
     return result;
@@ -286,58 +286,66 @@ void PacketEditPipe(unordered_map<int, CPipe>& mP)
     vector<uint32_t> allResult;
     allResult = searchPipe(mP);
     
-    cout << "Enter the edit parameter: \n"
-         << "1 - edit all find pipes; \n"
-         << "2 - edit some find pipes\n";
-    if (getInRange(1,2) == 1)
+    if (allResult.size() != 0)
     {
-        cout << "Enter the repair parameter: \n"
-             << "1 - all pipes are working; \n"
-             << "2 - all pipes under repair\n";
+        cout << "Enter the edit parameter: \n"
+            << "1 - edit all find pipes; \n"
+            << "2 - edit some find pipes\n";
         if (getInRange(1, 2) == 1)
         {
-            for (auto& id : allResult)
-                mP[id].repair = 1;
+            cout << "Enter the repair parameter: \n"
+                << "1 - all pipes are working; \n"
+                << "2 - all pipes under repair\n";
+            if (getInRange(1, 2) == 1)
+            {
+                for (auto& id : allResult)
+                    mP[id].repair = 1;
+            }
+            else
+            {
+                for (auto& id : allResult)
+                    mP[id].repair = 0;
+            }
         }
         else
         {
-            for (auto& id : allResult)
-                mP[id].repair = 0;
+            vector <int> someResult;
+            while (true)
+            {
+                cout << "Enter pipe's id to edit or 0 to complete: ";
+                uint32_t i;
+                i = getInRange(0, *max_element(allResult.begin(), allResult.end()));
+                if (i)
+                {
+                    if (mP.find(i) == mP.end())
+                        cout << "Error! There is no pipe with this id\n";
+                    else
+                        someResult.push_back(i);
+                }
+                else
+                    break;
+            }
+
+            cout << "Enter the repair parameter: \n"
+                << "1 - all pipes are working; \n"
+                << "2 - all pipes under repair\n";
+            if (getInRange(1, 2) == 1)
+            {
+                for (auto& id : someResult)
+                    mP[id].repair = 1;
+            }
+            else
+            {
+                for (auto& id : someResult)
+                    mP[id].repair = 0;
+            }
         }
     }
     else
     {
-        vector <int> someResult;
-        while (true)
-        {
-            cout << "Enter pipe's id to edit or 0 to complete: ";
-            uint32_t i;
-            i = getInRange(0,*max_element(allResult.begin(), allResult.end()));
-            if (i)
-            {
-                if (mP.find(i) == mP.end())
-                    cout << "Error! There is no pipe with this id\n";
-                else
-                    someResult.push_back(i);
-            }
-            else
-                break;
-        }
-        
-        cout << "Enter the repair parameter: \n"
-            << "1 - all pipes are working; \n"
-            << "2 - all pipes under repair\n";
-        if (getInRange(1, 2) == 1)
-        {
-            for (auto& id : someResult)
-                mP[id].repair = 1;
-        }
-        else
-        {
-            for (auto& id : someResult)
-                mP[id].repair = 0;
-        }
+        cout << "No pipes in filter -> no packet editing\n";
     }
+
 }
 
 int main()
@@ -387,7 +395,7 @@ int main()
             }
             else
             {
-                cout << "There are no pipes!";
+                cout << "There are no pipes!\n";
             }
             if (manyStations.size() != 0)
             {
@@ -399,7 +407,7 @@ int main()
             }
             else
             {
-                cout << "There are no stations!";
+                cout << "There are no stations!\n";
             }
             break;
         }
@@ -433,7 +441,8 @@ int main()
             {
                 string name;
                 cout << "Enter station name: ";
-                cin >> name;
+                cin >> ws;
+                getline(cin, name);
                 for (uint32_t i : findStationByFilter(manyStations, checkByName, name))
                 {
                     cout << manyStations[i];

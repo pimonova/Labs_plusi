@@ -14,8 +14,8 @@ std::istream& operator >> (std::istream& in, CStation& x)
     std::cout << "Number of workshops:\n";
     getCorrect(x.numOfWorkshops);
     std::cout << "Number of working workshops:\n";
-    x.numOfWorkingWorkshops = getInRange(0, x.numOfWorkshops);
-    x.efficiency = double(x.numOfWorkingWorkshops * 100) / x.numOfWorkshops;
+    x.numOfWorkingWorkshops = (getInRange(0, x.numOfWorkshops));
+    x.efficiency = (x.numOfWorkingWorkshops * 100) / (x.numOfWorkshops);
     return in;
 }
  
