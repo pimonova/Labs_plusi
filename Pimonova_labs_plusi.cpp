@@ -9,6 +9,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <set>
 #include <algorithm>
 #include "Pimonova_labs_plusi.h"
 
@@ -191,21 +192,21 @@ bool checkByNotWorkingWorkshops(const CStation& s, double parameter)
 }
 
 template<typename T>
-vector<uint32_t> findStationByFilter(unordered_map<int, CStation>& mS, Filter1<T> f, T parameter)
+set<uint32_t> findStationByFilter(unordered_map<int, CStation>& mS, Filter1<T> f, T parameter)
 {
-    vector<uint32_t> result;
+    set<uint32_t> result;
 
     for (auto& [sID, s] : mS)
     {
         if (f(s, parameter))
         {
-            result.push_back(s.getStationID());
+            result.insert(s.getStationID());
         }
     }
 
     if (result.empty())
     {
-        cout << "There are no pipes wuth this parameter\n";
+        cout << "There are no pipes with this parameter\n";
     }
 
     return result;
@@ -227,15 +228,15 @@ bool checkByRepair(const CPipe& p, uint32_t parameter)
 }
 
 template<typename T>
-vector<uint32_t> findPipeByFilter(unordered_map<int, CPipe>& mP, Filter2<T> f, T parameter)
+set<uint32_t> findPipeByFilter(unordered_map<int, CPipe>& mP, Filter2<T> f, T parameter)
 {
-    vector<uint32_t> result;
+    set<uint32_t> result;
 
     for (auto& [pID, p] : mP)
     {
         if (f(p, parameter))
         {
-            result.push_back(p.getPipeID());
+            result.insert(p.getPipeID());
         }
     }
 
@@ -247,9 +248,9 @@ vector<uint32_t> findPipeByFilter(unordered_map<int, CPipe>& mP, Filter2<T> f, T
     return result;
 }
 
-vector<uint32_t> searchPipe(unordered_map<int, CPipe>& mP)
+set<uint32_t> searchPipe(unordered_map<int, CPipe>& mP)
 {
-    vector<uint32_t> result{};
+    set<uint32_t> result{};
     cout << "Enter the search parameter: \n"
         << "1 - find pipe by IDs; \n"
         << "2 - find pipe by the repair\n";
@@ -283,7 +284,7 @@ vector<uint32_t> searchPipe(unordered_map<int, CPipe>& mP)
 
 void PacketEditPipe(unordered_map<int, CPipe>& mP)
 {
-    vector<uint32_t> allResult;
+    set<uint32_t> allResult;
     allResult = searchPipe(mP);
     
     if (allResult.size() != 0)
@@ -309,7 +310,7 @@ void PacketEditPipe(unordered_map<int, CPipe>& mP)
         }
         else
         {
-            vector <int> someResult;
+            set <uint32_t> someResult;
             while (true)
             {
                 cout << "Enter pipe's id to edit or 0 to complete: ";
@@ -317,10 +318,10 @@ void PacketEditPipe(unordered_map<int, CPipe>& mP)
                 i = getInRange(0, *max_element(allResult.begin(), allResult.end()));
                 if (i)
                 {
-                    if (mP.find(i) == mP.end())
+                    if (allResult.find(i) == allResult.end())
                         cout << "Error! There is no pipe with this id\n";
                     else
-                        someResult.push_back(i);
+                        someResult.insert(i);
                 }
                 else
                     break;
