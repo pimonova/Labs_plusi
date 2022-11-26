@@ -37,6 +37,15 @@ void showMenu()
     cout << "\n";
 }
 
+void getCorrectPipeDiameter(const set <double_t>& diameters, CPipe& p )
+{
+    while (diameters.find(p.diameter) == diameters.end())
+    {
+        cout << "Enter right diameter: 500, 700 or 1400\n";
+        getCorrect(p.diameter);
+    }
+}
+
 // функции изменения добавленных элементов
 
 void editPipeRepair(CPipe& x)
@@ -353,6 +362,7 @@ int main()
 {
     unordered_map<int, CPipe> manyPipes;
     unordered_map<int, CStation> manyStations;
+    set <double_t> rightDiameters = { 500, 700, 1400 };
 
     while (true)
     {
@@ -372,6 +382,7 @@ int main()
             system("cls");
             CPipe pipe;
             cin >> pipe;
+            getCorrectPipeDiameter(rightDiameters, pipe);
             manyPipes.insert({ pipe.getPipeID(), pipe });
             break;
         }
