@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <iostream>
+#include <set>
 
 class CPipe
 {
@@ -10,7 +11,7 @@ public:
 	static uint32_t newPipeID;
 
 	double length, diameter;
-	uint32_t repair;
+	uint32_t repair, inStationID, outStationID;
 
 	friend std::ostream& operator << (std::ostream& out, const CPipe& x);
 	friend std::istream& operator >> (std::istream& in, CPipe& x);
@@ -20,4 +21,6 @@ public:
 	CPipe();
 
 	uint32_t getPipeID() const;
+
+
 };

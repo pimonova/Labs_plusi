@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <cstdint>
+#include "CPipe.h"
 
 // функции для проверки
 template <typename T>
@@ -16,3 +17,5 @@ T getCorrect(T& x)
 }
 
 uint32_t getInRange(uint32_t x1, uint32_t x2);
+
+void getCorrectPipeDiameter(CPipe& p);

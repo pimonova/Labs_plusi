@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Utils.h"
 #include <string>
+#include <set>
 
 uint32_t CPipe::newPipeID = 0;
 
@@ -12,7 +13,7 @@ std::istream& operator >> (std::istream& in, CPipe& x)
     std::cout << "Length:\n";
     getCorrect(x.length);
     std::cout << "Diameter:\n";
-    getCorrect(x.diameter);
+    getCorrectPipeDiameter(x);
     std::cout << "Repair:\n";
     x.repair = getInRange(0, 1);
     return in;
@@ -45,8 +46,10 @@ CPipe::CPipe()
 {
     pipeID = ++newPipeID;
     length = 10.0;
-    diameter = 5.0;
+    diameter = 500;
     repair = 0;
+    inStationID = 0;
+    outStationID = 0;
 }
 
 uint32_t CPipe::getPipeID() const

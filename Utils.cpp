@@ -15,3 +15,15 @@ uint32_t getInRange(uint32_t x1, uint32_t x2)
     }
     return x;
 }
+
+void getCorrectPipeDiameter(CPipe& p)
+{
+    std::set<double_t> diameters = { 500, 700, 1400 };
+    getCorrect(p.diameter);
+    while (diameters.find(p.diameter) == diameters.end())
+    {
+        std::cout << "Enter right diameter: 500, 700 or 1400\n";
+        getCorrect(p.diameter);
+    }
+}
+

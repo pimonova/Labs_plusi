@@ -18,7 +18,7 @@ using namespace std;
 
 // enums
 
-enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, pipeSearch, stationSearch, save, download, deletePipe, deleteStation, packageEdit };
+enum mainMenu { exitMenu, addPipe, addStation, viewObjects, editPipe, editStation, pipeSearch, stationSearch, save, download, deletePipe, deleteStation, packageEdit, network };
 
 //functions
 
@@ -28,22 +28,14 @@ void showMenu()
     cout << "Welcome to the main menu! \nUse numbers to navigate:\n";
     cout << "\n";
     cout << "0. Exit \n1. Add pipe" << endl
-         << "2. Add station \n3. View all objects" << endl
-         << "4. Edit pipe \n5. Edit station" << endl
-         << "6. Pipe search\n7. Station search" << endl
-         << "8. Save to file \n9. Download from file \n"
-         << "10. Delete pipe \n11. Delete station \n"
-         << "12. Package editing of pipes\n";
+        << "2. Add station \n3. View all objects" << endl
+        << "4. Edit pipe \n5. Edit station" << endl
+        << "6. Pipe search\n7. Station search" << endl
+        << "8. Save to file \n9. Download from file \n"
+        << "10. Delete pipe \n11. Delete station \n"
+        << "12. Package editing of pipes\n"
+        << "13. Gas transmission network\n";
     cout << "\n";
-}
-
-void getCorrectPipeDiameter(const set <double_t>& diameters, CPipe& p )
-{
-    while (diameters.find(p.diameter) == diameters.end())
-    {
-        cout << "Enter right diameter: 500, 700 or 1400\n";
-        getCorrect(p.diameter);
-    }
 }
 
 // функции изменения добавленных элементов
@@ -63,7 +55,7 @@ void editStationWorkingWorkshops(CStation& x)
 
 // функции для работы с файлами
 
-void saveToFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation>& mS)
+void saveToFile(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CStation>& mS)
 {
     cout << "Enter the file name: ";
     string oFileName;
@@ -100,7 +92,7 @@ void saveToFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation>& mS)
     cout << "Data saved!" << endl;
 }
 
-void downloadFromFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation>& mS)
+void downloadFromFile(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CStation>& mS)
 {
     CPipe p;
     CStation s;
@@ -141,7 +133,7 @@ void downloadFromFile(unordered_map<int, CPipe>& mP, unordered_map<int, CStation
 
 // выбор объектов
 
-CPipe& selectPipe(unordered_map<int, CPipe>& mP)
+CPipe& selectPipe(unordered_map<uint32_t, CPipe>& mP)
 {
     cout << "Enter pipe ID: ";
     uint32_t userID;
@@ -155,7 +147,7 @@ CPipe& selectPipe(unordered_map<int, CPipe>& mP)
     return mP[userID];
 }
 
-CStation& selectStation(unordered_map<int, CStation>& mS)
+CStation& selectStation(unordered_map<uint32_t, CStation>& mS)
 {
     cout << "Enter station ID: ";
     uint32_t userID;
@@ -171,14 +163,14 @@ CStation& selectStation(unordered_map<int, CStation>& mS)
 
 // удаление единицы объекта
 
-void deleteOnePipe(unordered_map<int, CPipe>& mP)
+void deleteOnePipe(unordered_map<uint32_t, CPipe>& mP)
 {
     CPipe p = selectPipe(mP);
     mP.erase(p.getPipeID());
     cout << "Pipe removed!" << endl;
 }
 
-void deleteOneStaton(unordered_map<int, CStation>& mS)
+void deleteOneStaton(unordered_map<uint32_t, CStation>& mS)
 {
     CStation s = selectStation(mS);
     mS.erase(s.getStationID());
@@ -195,13 +187,13 @@ bool checkByName(const CStation& s, string parameter)
     return s.name.find(parameter) != string::npos;
 }
 
-bool checkByNotWorkingWorkshops(const CStation& s, double parameter)
+bool checkByNotWorkingWorkshops(const CStation& s, double_t parameter)
 {
     return (double((s.numOfWorkshops -s.numOfWorkingWorkshops) * 100) / s.numOfWorkshops) >= parameter;
 }
 
 template<typename T>
-set<uint32_t> findStationByFilter(unordered_map<int, CStation>& mS, Filter1<T> f, T parameter)
+set<uint32_t> findStationByFilter(unordered_map<uint32_t, CStation>& mS, Filter1<T> f, T parameter)
 {
     set<uint32_t> result;
 
@@ -237,7 +229,7 @@ bool checkByRepair(const CPipe& p, uint32_t parameter)
 }
 
 template<typename T>
-set<uint32_t> findPipeByFilter(unordered_map<int, CPipe>& mP, Filter2<T> f, T parameter)
+set<uint32_t> findPipeByFilter(unordered_map<uint32_t, CPipe>& mP, Filter2<T> f, T parameter)
 {
     set<uint32_t> result;
 
@@ -257,7 +249,7 @@ set<uint32_t> findPipeByFilter(unordered_map<int, CPipe>& mP, Filter2<T> f, T pa
     return result;
 }
 
-set<uint32_t> searchPipe(unordered_map<int, CPipe>& mP)
+set<uint32_t> searchPipe(unordered_map<uint32_t, CPipe>& mP)
 {
     set<uint32_t> result{};
     cout << "Enter the search parameter: \n"
@@ -291,7 +283,7 @@ set<uint32_t> searchPipe(unordered_map<int, CPipe>& mP)
 
 // пакетное редактирование
 
-void PacketEditPipe(unordered_map<int, CPipe>& mP)
+void PacketEditPipe(unordered_map<uint32_t, CPipe>& mP)
 {
     set<uint32_t> allResult;
     allResult = searchPipe(mP);
@@ -358,18 +350,80 @@ void PacketEditPipe(unordered_map<int, CPipe>& mP)
 
 }
 
+// соединение труб и станций
+
+void connection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CStation>& mS)
+{
+    if ((mP.size() > 0) && (mS.size() > 1))
+    {
+        CPipe selectPipeToConnection;
+        selectPipeToConnection = selectPipe(mP);
+        if (mP[selectPipeToConnection.getPipeID()].inStationID == 0 && mP[selectPipeToConnection.getPipeID()].outStationID == 0)
+        {
+            CStation outStation;
+            CStation inStation;
+            cout << "OUT";
+            outStation = selectStation(mS);
+            cout << "IN";
+            inStation = selectStation(mS);
+            while (outStation.getStationID() == inStation.getStationID())
+            {
+                cout << "The same station cannot be an entrance and an exit!\n";
+                inStation = selectStation(mS);
+            }
+            mP[selectPipeToConnection.getPipeID()].outStationID = outStation.getStationID();
+            mP[selectPipeToConnection.getPipeID()].inStationID = inStation.getStationID();
+            cout << "Pipe and stations are connected!\n";
+        }
+        else
+        {
+            cout << "The pipe is already connected\n";
+        }
+ 
+    }
+    else
+    {
+        cout << "Not enough pipes or stations to connect\n";
+    }
+}
+
+// удаление соединения трубы и станции
+
+
+
+// посмотреть газотранспортную сеть
+
+void viewNetwork(unordered_map<uint32_t, CPipe>& mP)
+{
+    for (auto& [pID, p] : mP)
+    {
+        if (p.inStationID > 0 && p.outStationID > 0)
+        {
+            cout << "\nPipe's ID: " << p.getPipeID() << endl;
+            cout << "Pipe is connected" << endl;
+            cout << "Station's ID in: " << p.inStationID << endl;
+            cout << "Station's ID out: " << p.outStationID << endl;
+        }
+        else
+        {
+            cout << "\nPipe's ID: " << p.getPipeID() << endl;
+            cout << "Pipe isn't connected" << endl;
+        }
+
+    }
+}
+
 int main()
 {
-    unordered_map<int, CPipe> manyPipes;
-    unordered_map<int, CStation> manyStations;
-    set <double_t> rightDiameters = { 500, 700, 1400 };
-
+    unordered_map<uint32_t, CPipe> manyPipes;
+    unordered_map<uint32_t, CStation> manyStations;
+ 
     while (true)
     {
         showMenu();
         cout << "Enter an operation: ";
         uint32_t operation;
-        operation = getInRange(0, 12);
+        operation = getInRange(0, 13);
 
         switch (operation)
         {
@@ -382,7 +436,6 @@ int main()
             system("cls");
             CPipe pipe;
             cin >> pipe;
-            getCorrectPipeDiameter(rightDiameters, pipe);
             manyPipes.insert({ pipe.getPipeID(), pipe });
             break;
         }
@@ -462,7 +515,7 @@ int main()
             }
             else
             {
-                double percent;
+                double_t percent;
                 cout << "Enter percent of not working workshops: ";
                 getCorrect(percent);
                 for (uint32_t i : findStationByFilter(manyStations, checkByNotWorkingWorkshops, percent))
@@ -484,6 +537,33 @@ int main()
         case mainMenu::packageEdit:
             system("cls");
             PacketEditPipe(manyPipes);
+            break;
+        case mainMenu::network:
+            system("cls");
+            cout << "Choose action: " << endl
+                 << "1 - connect pipe with stations;" << endl
+                 << "2 - disconnect pipe with stations;" << endl
+                 << "3 - show network;" << endl
+                 << "4 - topological sort." << endl;
+            switch (getInRange(1, 4))
+            {
+            case 1:
+                system("cls");
+                connection(manyPipes, manyStations);
+                break;
+            case 2:
+                system("cls");
+                
+                break;
+            case 3:
+                system("cls");
+                viewNetwork(manyPipes);
+                break;
+            case 4:
+                system("cls");
+
+                break;
+            }
             break;
         }
     }
