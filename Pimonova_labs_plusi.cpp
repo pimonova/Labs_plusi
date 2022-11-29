@@ -352,7 +352,7 @@ void PacketEditPipe(unordered_map<uint32_t, CPipe>& mP)
 
 // соединение труб и станций
 
-void connection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CStation>& mS)
+void addConnection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CStation>& mS)
 {
     if ((mP.size() > 0) && (mS.size() > 1))
     {
@@ -362,9 +362,9 @@ void connection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CSta
         {
             CStation outStation;
             CStation inStation;
-            cout << "OUT";
+            cout << "OUT\n";
             outStation = selectStation(mS);
-            cout << "IN";
+            cout << "IN\n";
             inStation = selectStation(mS);
             while (outStation.getStationID() == inStation.getStationID())
             {
@@ -389,7 +389,28 @@ void connection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CSta
 
 // удаление соединения трубы и станции
 
-
+void deleteConnection(unordered_map<uint32_t, CPipe>& mP)
+{
+    if (mP.size() > 0)
+    {
+        CPipe selectPipeToDeleteConnection;
+        selectPipeToDeleteConnection = selectPipe(mP);
+        if (mP[selectPipeToDeleteConnection.getPipeID()].inStationID == 0)
+        {
+            cout << "Pipe isn't connected" << endl;
+        }
+        else
+        {
+            mP[selectPipeToDeleteConnection.getPipeID()].outStationID = 0;
+            mP[selectPipeToDeleteConnection.getPipeID()].inStationID = 0;
+            cout << "Pipe and stations are disconnected!\n";
+        }
+    }
+    else
+    {
+        cout << "There are no pipes!\n";
+    }
+}
 
 // посмотреть газотранспортную сеть
 
@@ -549,11 +570,11 @@ int main()
             {
             case 1:
                 system("cls");
-                connection(manyPipes, manyStations);
+                addConnection(manyPipes, manyStations);
                 break;
             case 2:
                 system("cls");
-                
+                deleteConnection(manyPipes);
                 break;
             case 3:
                 system("cls");
