@@ -18,4 +18,4 @@ T getCorrect(T& x)
 
 uint32_t getInRange(uint32_t x1, uint32_t x2);
 
-void getCorrectPipeDiameter(CPipe& p);
+double_t getCorrectPipeDiameter();

@@ -3,6 +3,7 @@
 
 #include "CPipe.h"
 #include "CStation.h"
+#include "CGasTransportingNetwork.h"
 #include "Utils.h"
 #include <iostream>
 #include <fstream>
@@ -228,6 +229,16 @@ bool checkByRepair(const CPipe& p, uint32_t parameter)
     return p.repair == parameter;
 }
 
+bool checkByDiameter(const CPipe& p, uint32_t parameter)
+{
+    return p.diameter == parameter;
+}
+
+bool checkByConnection(const CPipe& p, uint32_t parameter)
+{
+    return (p.inStationID == parameter) && (p.outStationID == parameter);
+}
+
 template<typename T>
 set<uint32_t> findPipeByFilter(unordered_map<uint32_t, CPipe>& mP, Filter2<T> f, T parameter)
 {
@@ -352,14 +363,28 @@ void PacketEditPipe(unordered_map<uint32_t, CPipe>& mP)
 
 // соединение труб и станций
 
-void addConnection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CStation>& mS)
+/*void addConnection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CStation>& mS)
 {
     if ((mP.size() > 0) && (mS.size() > 1))
     {
-        CPipe selectPipeToConnection;
-        selectPipeToConnection = selectPipe(mP);
-        if (mP[selectPipeToConnection.getPipeID()].inStationID == 0 && mP[selectPipeToConnection.getPipeID()].outStationID == 0)
+        vector<uint32_t> result{};
+        cout << "Enter pipe diameter to add connection: ";
+        double_t pDiameter = getCorrectPipeDiameter();
+
+        for (auto& [pID, p] : mP)
         {
+            if (checkByDiameter(p, pDiameter) && checkByConnection(p,0))
+            {
+                result.push_back(p.getPipeID());
+            }
+        }
+
+        if (result.empty())
+        {
+            cout << "There are no avaiable pipes with this parameter\n";
+            CPipe selectPipeToConnection;
+            cin >> selectPipeToConnection;
+            mP.insert({ selectPipeToConnection.getPipeID(), selectPipeToConnection });
             CStation outStation;
             CStation inStation;
             cout << "OUT\n";
@@ -377,9 +402,24 @@ void addConnection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, C
         }
         else
         {
-            cout << "The pipe is already connected\n";
+            CPipe selectPipeToConnection;
+            selectPipeToConnection = mP[result[0]];
+
+            CStation outStation;
+            CStation inStation;
+            cout << "OUT\n";
+            outStation = selectStation(mS);
+            cout << "IN\n";
+            inStation = selectStation(mS);
+            while (outStation.getStationID() == inStation.getStationID())
+            {
+                cout << "The same station cannot be an entrance and an exit!\n";
+                inStation = selectStation(mS);
+            }
+            mP[selectPipeToConnection.getPipeID()].outStationID = outStation.getStationID();
+            mP[selectPipeToConnection.getPipeID()].inStationID = inStation.getStationID();
+            cout << "Pipe and stations are connected!\n";
         }
- 
     }
     else
     {
@@ -432,7 +472,7 @@ void viewNetwork(unordered_map<uint32_t, CPipe>& mP)
         }
 
     }
-}
+}*/
 
 int main()
 {
@@ -560,7 +600,7 @@ int main()
             PacketEditPipe(manyPipes);
             break;
         case mainMenu::network:
-            system("cls");
+            /*system("cls");
             cout << "Choose action: " << endl
                  << "1 - connect pipe with stations;" << endl
                  << "2 - disconnect pipe with stations;" << endl
@@ -585,7 +625,7 @@ int main()
 
                 break;
             }
-            break;
+            break;*/
         }
     }
 
