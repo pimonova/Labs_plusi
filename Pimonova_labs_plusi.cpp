@@ -478,6 +478,7 @@ int main()
 {
     unordered_map<uint32_t, CPipe> manyPipes;
     unordered_map<uint32_t, CStation> manyStations;
+    CGasTransportingNetwork GTN;
  
     while (true)
     {
@@ -529,7 +530,6 @@ int main()
                 {
                     cout << s << endl;
                 }
-
             }
             else
             {
@@ -584,7 +584,6 @@ int main()
                     cout << manyStations[i];
                 }
             }
-            
             break;
         }
         case mainMenu::deletePipe:
@@ -600,7 +599,7 @@ int main()
             PacketEditPipe(manyPipes);
             break;
         case mainMenu::network:
-            /*system("cls");
+            system("cls");
             cout << "Choose action: " << endl
                  << "1 - connect pipe with stations;" << endl
                  << "2 - disconnect pipe with stations;" << endl
@@ -610,22 +609,22 @@ int main()
             {
             case 1:
                 system("cls");
-                addConnection(manyPipes, manyStations);
+                //addConnection(manyPipes, manyStations);
                 break;
             case 2:
                 system("cls");
-                deleteConnection(manyPipes);
+                GTN.deleteConnection(manyPipes, manyStations);
                 break;
             case 3:
                 system("cls");
-                viewNetwork(manyPipes);
+                GTN.showConnection(manyPipes, manyStations);
                 break;
             case 4:
                 system("cls");
 
                 break;
             }
-            break;*/
+            break;
         }
     }
 
