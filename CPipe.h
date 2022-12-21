@@ -31,4 +31,6 @@ public:
 	bool canBeUsed() const;
 
 	void showLink() const;
+
+	uint32_t getProductivity() const;
 };

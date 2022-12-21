@@ -35,7 +35,7 @@ void showMenu()
         << "8. Save to file \n9. Download from file \n"
         << "10. Delete pipe \n11. Delete station \n"
         << "12. Package editing of pipes\n"
-        << "13. Gas transmission network\n";
+        << "13. Gas transporting network\n";
     cout << "\n";
 }
 
@@ -162,22 +162,6 @@ CStation& selectStation(unordered_map<uint32_t, CStation>& mS)
     return mS[userID];
 }
 
-// удаление единицы объекта
-
-void deleteOnePipe(unordered_map<uint32_t, CPipe>& mP)
-{
-    CPipe p = selectPipe(mP);
-    mP.erase(p.getPipeID());
-    cout << "Pipe removed!" << endl;
-}
-
-void deleteOneStaton(unordered_map<uint32_t, CStation>& mS)
-{
-    CStation s = selectStation(mS);
-    mS.erase(s.getStationID());
-    cout << "Station removed!" << endl;
-}
-
 // поиск по станциям
 
 template<typename T>
@@ -227,16 +211,6 @@ bool checkByID(const CPipe& p, uint32_t parameter)
 bool checkByRepair(const CPipe& p, uint32_t parameter)
 {
     return p.repair == parameter;
-}
-
-bool checkByDiameter(const CPipe& p, uint32_t parameter)
-{
-    return p.diameter == parameter;
-}
-
-bool checkByConnection(const CPipe& p, uint32_t parameter)
-{
-    return (p.inStationID == parameter) && (p.outStationID == parameter);
 }
 
 template<typename T>
@@ -361,119 +335,6 @@ void PacketEditPipe(unordered_map<uint32_t, CPipe>& mP)
 
 }
 
-// соединение труб и станций
-
-/*void addConnection(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t, CStation>& mS)
-{
-    if ((mP.size() > 0) && (mS.size() > 1))
-    {
-        vector<uint32_t> result{};
-        cout << "Enter pipe diameter to add connection: ";
-        double_t pDiameter = getCorrectPipeDiameter();
-
-        for (auto& [pID, p] : mP)
-        {
-            if (checkByDiameter(p, pDiameter) && checkByConnection(p,0))
-            {
-                result.push_back(p.getPipeID());
-            }
-        }
-
-        if (result.empty())
-        {
-            cout << "There are no avaiable pipes with this parameter\n";
-            CPipe selectPipeToConnection;
-            cin >> selectPipeToConnection;
-            mP.insert({ selectPipeToConnection.getPipeID(), selectPipeToConnection });
-            CStation outStation;
-            CStation inStation;
-            cout << "OUT\n";
-            outStation = selectStation(mS);
-            cout << "IN\n";
-            inStation = selectStation(mS);
-            while (outStation.getStationID() == inStation.getStationID())
-            {
-                cout << "The same station cannot be an entrance and an exit!\n";
-                inStation = selectStation(mS);
-            }
-            mP[selectPipeToConnection.getPipeID()].outStationID = outStation.getStationID();
-            mP[selectPipeToConnection.getPipeID()].inStationID = inStation.getStationID();
-            cout << "Pipe and stations are connected!\n";
-        }
-        else
-        {
-            CPipe selectPipeToConnection;
-            selectPipeToConnection = mP[result[0]];
-
-            CStation outStation;
-            CStation inStation;
-            cout << "OUT\n";
-            outStation = selectStation(mS);
-            cout << "IN\n";
-            inStation = selectStation(mS);
-            while (outStation.getStationID() == inStation.getStationID())
-            {
-                cout << "The same station cannot be an entrance and an exit!\n";
-                inStation = selectStation(mS);
-            }
-            mP[selectPipeToConnection.getPipeID()].outStationID = outStation.getStationID();
-            mP[selectPipeToConnection.getPipeID()].inStationID = inStation.getStationID();
-            cout << "Pipe and stations are connected!\n";
-        }
-    }
-    else
-    {
-        cout << "Not enough pipes or stations to connect\n";
-    }
-}
-
-// удаление соединения трубы и станции
-
-void deleteConnection(unordered_map<uint32_t, CPipe>& mP)
-{
-    if (mP.size() > 0)
-    {
-        CPipe selectPipeToDeleteConnection;
-        selectPipeToDeleteConnection = selectPipe(mP);
-        if (mP[selectPipeToDeleteConnection.getPipeID()].inStationID == 0)
-        {
-            cout << "Pipe isn't connected" << endl;
-        }
-        else
-        {
-            mP[selectPipeToDeleteConnection.getPipeID()].outStationID = 0;
-            mP[selectPipeToDeleteConnection.getPipeID()].inStationID = 0;
-            cout << "Pipe and stations are disconnected!\n";
-        }
-    }
-    else
-    {
-        cout << "There are no pipes!\n";
-    }
-}
-
-// посмотреть газотранспортную сеть
-
-void viewNetwork(unordered_map<uint32_t, CPipe>& mP)
-{
-    for (auto& [pID, p] : mP)
-    {
-        if (p.inStationID > 0 && p.outStationID > 0)
-        {
-            cout << "\nPipe's ID: " << p.getPipeID() << endl;
-            cout << "Pipe is connected" << endl;
-            cout << "Station's ID in: " << p.inStationID << endl;
-            cout << "Station's ID out: " << p.outStationID << endl;
-        }
-        else
-        {
-            cout << "\nPipe's ID: " << p.getPipeID() << endl;
-            cout << "Pipe isn't connected" << endl;
-        }
-
-    }
-}*/
-
 int main()
 {
     unordered_map<uint32_t, CPipe> manyPipes;
@@ -518,7 +379,6 @@ int main()
                 {
                     cout << p << endl;
                 }
-
             }
             else
             {
@@ -588,11 +448,11 @@ int main()
         }
         case mainMenu::deletePipe:
             system("cls");
-            deleteOnePipe(manyPipes);
+            GTN.deleteItems(manyPipes);
             break;
         case mainMenu::deleteStation:
             system("cls");
-            deleteOneStaton(manyStations);
+            GTN.deleteItems(manyStations);
             break;
         case mainMenu::packageEdit:
             system("cls");
@@ -609,7 +469,7 @@ int main()
             {
             case 1:
                 system("cls");
-                //addConnection(manyPipes, manyStations);
+                GTN.addConnection(manyPipes, manyStations);
                 break;
             case 2:
                 system("cls");

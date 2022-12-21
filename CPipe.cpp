@@ -21,7 +21,8 @@ std::istream& operator >> (std::istream& in, CPipe& x)
 
 std::ofstream& operator << (std::ofstream& out, const CPipe& x)
 {
-    out << x.pipeID << std::endl << x.length << std::endl << x.diameter << std::endl << x.repair << std::endl << x.inStationID << std::endl << x.outStationID;
+    out << x.pipeID << std::endl << x.length << std::endl << x.diameter << std::endl
+        << x.repair << std::endl << x.inStationID << std::endl << x.outStationID;
     return out;
 }
 
@@ -96,4 +97,9 @@ void CPipe::showLink() const
     std::cout << "Station's ID in: " << inStationID << std::endl;
     std::cout << "Station's ID out: " << outStationID << std::endl;
     std::cout << "Status: " << ((repair == true) ? "repair " : "work ") << std::endl;
+}
+
+uint32_t CPipe::getProductivity() const
+{
+    return round(10000 * sqrt(pow(double(diameter) / 1000, 5) / length));
 }

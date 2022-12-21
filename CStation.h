@@ -11,6 +11,7 @@ public:
 
 	std::string name;
 	uint32_t numOfWorkshops, numOfWorkingWorkshops, efficiency;
+	bool connection;
 
 	friend std::ostream& operator << (std::ostream& out, const CStation& x);
 	friend std::istream& operator >> (std::istream& in, CStation& x);
@@ -20,5 +21,11 @@ public:
 	CStation();
 
 	uint32_t getStationID();
+
+	void createLink();
+
+	void clearLink();
+
+	bool linked();
 };
 
