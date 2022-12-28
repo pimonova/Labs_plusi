@@ -66,8 +66,8 @@ void CPipe::link(uint32_t newIn, uint32_t newOut)
 {
     if (inStationID == 0 && outStationID == 0 && newOut != newIn)
     {
-        inStationID = newOut;
-        outStationID = newIn;
+        inStationID = newIn;
+        outStationID = newOut;
     }
     else
     {

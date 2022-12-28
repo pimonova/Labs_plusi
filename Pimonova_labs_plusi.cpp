@@ -117,12 +117,14 @@ void downloadFromFile(unordered_map<uint32_t, CPipe>& mP, unordered_map<uint32_t
             {
                 fin >> s;
                 mS.insert({ s.getStationID(), s });
+                s.newStationID = s.getStationID();
             }
 
             if (line == "pipe")
             {
                 fin >> p;
                 mP.insert({ p.getPipeID(), p });
+                p.newPipeID = p.getPipeID();
             }
         }
         
@@ -464,8 +466,10 @@ int main()
                  << "1 - connect pipe with stations;" << endl
                  << "2 - disconnect pipe with stations;" << endl
                  << "3 - show network;" << endl
-                 << "4 - topological sort." << endl;
-            switch (getInRange(1, 4))
+                 << "4 - topological sort;" << endl
+                 << "5 - max flow;" << endl
+                 << "6 - find way." << endl;
+            switch (getInRange(1, 6))
             {
             case 1:
                 system("cls");
@@ -481,7 +485,17 @@ int main()
                 break;
             case 4:
                 system("cls");
-
+                GTN.showTopologicalSort(manyPipes, manyStations);
+                break;
+            case 5:
+            {
+                system("cls");
+                GTN.findMaxStream(manyPipes, manyStations);
+                break;
+            }
+            case 6:
+                system("cls");
+                GTN.showFindWay(manyPipes, manyStations);
                 break;
             }
             break;

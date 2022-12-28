@@ -22,7 +22,7 @@ std::istream& operator >> (std::istream& in, CStation& x)
 std::ofstream& operator << (std::ofstream& out, CStation& x)
 {
     out << x.stationID << std::endl << x.name << std::endl << x.numOfWorkshops << std::endl
-        << x.numOfWorkingWorkshops << std::endl << x.efficiency << std::endl << x.connection << std::endl;
+        << x.numOfWorkingWorkshops << std::endl << x.efficiency << std::endl << x.connection;
     return out;
 }
 
